@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/ash
 
 #set my name and version
 vibi=0.1

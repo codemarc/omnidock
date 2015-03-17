@@ -38,9 +38,9 @@ You use the Boot2Docker client to control the virtualized Docker Engine thru ssh
 1. From the Desktop run the "Boot2Docker Start". This shortcut starts actually starts the msysGit interpreter and runs the script named start.sh in the Boot2Docker for Windows directory. 
 
 1. Then issue the following commands from the boot2docker machine
-> git clone https://github.com/codemarc/omnidock  
-> chmod +x omnidock/omni.sh  
-> ln -s $(pwd)/omnidock/omni.sh /usr/local/bin/omni
-> omni update  
-> omni up
 
+    git clone https://github.com/codemarc/omnidock  
+    chmod +x omnidock/omni.sh  
+    ln -sf $(pwd)/omnidock/omni.sh /usr/local/bin/omni
+    omni update  
+    omni up
