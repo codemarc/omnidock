@@ -46,16 +46,9 @@ if [ "$1" = "up" ]; then
 		docker run -d -h="postgres" --name postgres --dns=$hostip  -p 5432:5432 postgres:9.4 2>&1 >/dev/null
 	fi	
 
-	docker inspect sentinel 2>/dev/null 1>/dev/null
+	docker inspect ism 2>/dev/null 1>/dev/null
 	if [ $? -ne 0 ]; then
-		docker run -d -h="sentinel" --name sentinel --dns=$hostip -p 8080:8080 cibi/sentinel:1.3 2>&1 >/dev/null
-	fi	
-
-	docker inspect otb 2>/dev/null 1>/dev/null
-	if [ $? -ne 0 ]; then
-		sentinel=$(docker inspect --format='{{.NetworkSettings.IPAddress}}' sentinel)
-
-		docker run -d -h="otb" --name otb --dns=$hostip --env sentinel=$sentinel \
+		docker run -d -h="ism" --name ism --dns=$hostip --env sentinel=$hostip \
 			-P -p 9999:9999 -p 9000:9000 -p 9001:9001 -p 9022:22 \
 			cibi/ism:7.0.2 2>&1 >/dev/null
 	fi	
@@ -81,8 +74,7 @@ fi
  }  
 
 if [ "$1" = "down" ]; then
-	StopRemove otb
-	StopRemove sentinel
+	StopRemove ism
 	StopRemove postgres
 	echo
 	exit
