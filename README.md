@@ -1,6 +1,4 @@
-# Omni Integrators Workbench
-# On Docker
-
+# Omni Integrators Workbench On Docker
 
 Information Builders, Omni Applications are domain specific master data applications that combine a enterprise mastered index with one or more pre-packaged models to provide full identity management, to achieve a 360-degree view of a key entities, with a single golden record for each player.
 
@@ -40,7 +38,7 @@ You use the Boot2Docker client to control the virtualized Docker Engine thru ssh
 1. Then issue the following commands from the boot2docker machine
 
     git clone https://github.com/codemarc/omnidock  
-    chmod +x omnidock/omni.sh  
+    chmod +x omnidock/*.sh  
     ln -sf $(pwd)/omnidock/omni.sh /usr/local/bin/omni  
     omni update  
     omni up  
