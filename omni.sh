@@ -22,16 +22,15 @@ if [ $# -lt 1 ]; then
 	echo "  up        creates and starts test environment"
 	echo "  down      stops and removes test environment"
 	echo "  update    updates oiw images and scripts"
-	echo "  init      runs init scripts"
-	echo "  addr      Gets known ip addresses"        
+	echo "  ip        lists known ip addresses"        
 	echo
 	echo
 	exit
 fi
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# addr
-if [ "$1" = "addr" ]; then
+# ip
+if [ "$1" = "ip" ]; then
     echo
 	echo $hostnm $hostip "(localhost)"
 	cc=$(docker ps -qa | wc -w)
@@ -41,15 +40,6 @@ if [ "$1" = "addr" ]; then
     echo
     exit	
 fi
-
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# init
-if [ "$1" = "init" ]; then
-   ./postgres/init.sh;
-   echo
-   exit
-fi
-
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # update
@@ -64,15 +54,21 @@ fi
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # up
 if [ "$1" = "up" ]; then
+
 	cc=$(docker info 2>/dev/null | grep Containers | cut -d':' -s -f2)
 	if [ $cc -gt 0 ]; then
 	   echo 
 	   echo "!!! Warning containers may already exist !!!"
 	fi
 
-	docker run -d -h="postgres" --name postgres -p 5432:5432 postgres:9.4 2>&1 >/dev/null
+	docker run -d -h="postgres" --name postgres --dns=$hostip \
+	   -p 5432:5432 postgres:9.4 2>&1 >/dev/null
+	   
+	if [ $? -eq 0 ]; then
+	   ./postgres/init.sh;
+	fi
 
-	docker run -d -h="ism" --name ism --env sentinel=$hostip \
+	docker run -d -h="ism" --name ism --dns=$hostip --env sentinel=$hostip \
 		-P -p 9999:9999 -p 9000:9000 -p 9001:9001 -p 9022:22 \
 		cibi/ism:7.0.2 2>&1 >/dev/null
 	
