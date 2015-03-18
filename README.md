@@ -33,8 +33,8 @@ You use the Boot2Docker client to control the virtualized Docker Engine thru ssh
 
 1. Then issue the following commands from the boot2docker machine:
 
-    git clone https://github.com/codemarc/omnidock 
-    cd omnidock 
+    git clone https://github.com/codemarc/omnidock  
+    cd omnidock  
     ./omni.sh update  
     ./omni.sh up  
     ./omni.sh init  
@@ -47,7 +47,7 @@ So it all works and now its time to move on to something else. If you want to su
 
 	$ boot2docker suspend		To save the environment or you can type
 	$ boot2docker resume 		To bring it back
-	$ boot2docker ssh			To ssh into the running docker machine
+	$ boot2docker ssh		To ssh into the running docker machine
 	
 	and from there you can type 
 
