@@ -36,8 +36,8 @@ You use the Boot2Docker client to control the virtualized Docker Engine thru ssh
     git clone https://github.com/codemarc/omnidock 
     cd omnidock 
     ./omni.sh update  
-    ./omni.sh up
-    ./omni.sh init
+    ./omni.sh up  
+    ./omni.sh init  
 
 At this point you should have a valid docker machine (boot2docker client is at 192.168.59.103) available to your development environment, with the integrators tooling available. You should validate your connection with the database by using pgAdmin and connecting to the postgres instance at 192.168.59.103:5432. You should find the omni database with the healthviews schema. 
 
