@@ -22,9 +22,20 @@ if [ $# -lt 1 ]; then
 	echo "  up        creates and starts test environment"
 	echo "  down      stops and removes test environment"
 	echo "  update    updates oiw images and scripts"
+	echo "  ip        Gets known ip addresses"        
 	echo
 	echo
 	exit
+fi
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# ip
+if [ "$1" = "ip" ]; then
+    echo
+	echo $hostnm $hostip "(localhost)"
+	docker ps -a -q | xargs docker inspect --format='{{.Config.Hostname}} {{.NetworkSettings.IPAddress}} ({{.Config.Image}})'
+    echo
+    exit	
 fi
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -43,13 +54,13 @@ if [ "$1" = "up" ]; then
 
 	docker inspect postgres 2>/dev/null 1>/dev/null
 	if [ $? -ne 0 ]; then
-		docker run -d -h="postgres" --name postgres --dns=$hostip  -p 5432:5432 postgres:9.4 2>&1 >/dev/null
+		docker run -d -h="postgres" --name postgres -p 5432:5432 postgres:9.4 2>&1 >/dev/null
 		./postgres/init.sh
 	fi	
 
 	docker inspect ism 2>/dev/null 1>/dev/null
 	if [ $? -ne 0 ]; then
-		docker run -d -h="ism" --name ism --dns=$hostip --env sentinel=$hostip \
+		docker run -d -h="ism" --name ism --env sentinel=$hostip \
 			-P -p 9999:9999 -p 9000:9000 -p 9001:9001 -p 9022:22 \
 			cibi/ism:7.0.2 2>&1 >/dev/null
 	fi	
