@@ -1,6 +1,6 @@
 #!/bin/ash
-echo "CREATE DATABASE omni"      > init.sql
-echo "CREATE SCHEMA healthviews" >> init.sql
+echo "CREATE DATABASE omni;"      > init.sql
+echo "CREATE SCHEMA healthviews;" >> init.sql
 
 cat postgres/postgre.hv_1.1.1_fk_1.0.0.0.sql >> init.sql
 
