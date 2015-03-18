@@ -44,6 +44,7 @@ if [ "$1" = "up" ]; then
 	docker inspect postgres 2>/dev/null 1>/dev/null
 	if [ $? -ne 0 ]; then
 		docker run -d -h="postgres" --name postgres --dns=$hostip  -p 5432:5432 postgres:9.4 2>&1 >/dev/null
+		./postgres/init.sh
 	fi	
 
 	docker inspect ism 2>/dev/null 1>/dev/null

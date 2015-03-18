@@ -5,40 +5,61 @@ Information Builders, Omni Applications are domain specific master data applicat
 ## About Omnidock
 The Omni Integrators Workbench on Docker (omnidock) is a defined process that can be used to run standalone validation of an integrators work product. This document will help you get started.
 
-<br/><br/><hr/>
-### Setup on  Windows
+### Boot2Docker
 Monday, 16th March 2015
 
-At the moment, docker uses linux-specific kernel features, so to run it on Windows you **must** use a virtual machine. Here are two system I have tested used to achieve this:
+At the moment, docker uses linux-specific kernel features, so to run it on non-linux systems ( windows, mac osx ) you **must** use a virtual machine.
 
-* [boot2docker v1.5.0](https://github.com/boot2docker/windows-installer/releases/tag/v1.5.0) 
-* [rancheros v0.1.2 - Docker 1.5.0 - Linux 3.18.6](https://github.com/rancherio/os/releases/download/v0.1.2/rancheros.iso)
+#### Setup
 
-<br/>
-#### Windows 7 Profressional Service Pack1
+* [Windows - boot2docker v1.5.0](https://github.com/boot2docker/windows-installer/releases/tag/v1.5.0)
+*  [Mac OSX - boot2docker v1.5.0](https://github.com/boot2docker/osx-installer/releases/latest)
 
-
-##### using Boot2Docker
-The recommended way to use docker on windows is to use the [boot2docker](http://boot2docker.io/). Detailed instructions for this are found in the [docker documentation site](https://docs.docker.com/installation/windows/) in the windows install section. The current installation of the package includes recent versions of
+The recommended way to use docker on windows and osx is to use the [boot2docker](http://boot2docker.io/). Detailed instructions for this are found in the [docker documentation site](https://docs.docker.com/installation/). The current installation of the package includes recent versions of
 
 * [VirtualBox](https://www.virtualbox.org)  
 * [msysgit](http://msysgit.github.io/) (git, bash and openssh),  
 * [Boot2Docker-cli](https://github.com/boot2docker/boot2docker-cli)
 
-You use the Boot2Docker client to control the virtualized Docker Engine thru ssh. Using VirtualBox this way is the most common windows solution.
+You use the Boot2Docker client to control the virtualized Docker Engine thru ssh. Using VirtualBox this way is the most common non-linux solution.
 
-##### What I did
+##### Up and running
 
 1. Create the Omni account for testing and login to it. If you are using an older PC you may need to enable the hardware virtiualization setting in the bios.  
 
-1. Download and run the latest [docker-install.exe](https://github.com/boot2docker/windows-installer/releases/tag/v1.5.0) all the way thru including a full reboot.
+1. Download and run the latest all the way thru, (it may require a full reboot).
 
-1. From the Desktop run the "Boot2Docker Start". This shortcut starts actually starts the msysGit interpreter and runs the script named start.sh in the Boot2Docker for Windows directory. 
+1. From the Desktop run the "Boot2Docker Start". This shortcut starts actually starts a platform specific bash shell and runs enough initialization script docker available.
 
-1. Then issue the following commands from the boot2docker machine
+1. Then issue the following commands from the boot2docker machine:
 
     git clone https://github.com/codemarc/omnidock  
-    chmod +x omnidock/*.sh  
-    ln -sf $(pwd)/omnidock/omni.sh /usr/local/bin/omni  
-    omni update  
-    omni up  
+    ./omni.sh update  
+    ./omni.sh up
+
+At this point you should have a valid docker machine (boot2docker client is at 192.168.59.103) available to your development environment, with the integrators tooling available. You should validate your connection with the database by using pgAdmin and connecting to the postgres instance at 192.168.59.103:5432. You should find the omni database with the healthviews schema. 
+
+##### Done for now
+
+So it all works and now its time to move on to something else. If you want to suspend the environment you can type:
+
+	$ boot2docker suspend		To save the environment or you can type
+	$ boot2docker resume 		To bring it back
+	$ boot2docker ssh			To ssh into the running docker machine
+	
+	and from there you can type 
+
+	$ ./omni.sh down			To stop the containers so that we can start fresh start
+
+	and finally 
+	
+	$ boot2docker poweroff
+	
+	> fin
+	
+#### Contact Info
+If you have any questions or comments please feel free to reach out via email [marc_greenberg@ibi.com](mailto:marc_greenberg@ibi.com)
+
+    
+	
+	
