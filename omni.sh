@@ -1,7 +1,7 @@
 #!/bin/ash
 
 #set my name and version
-vibi=0.1
+vibi=0.2
 
 # get my host name and ip address
 hostnm=$(hostname)
