@@ -35,7 +35,8 @@ You use the Boot2Docker client to control the virtualized Docker Engine thru ssh
 
     git clone https://github.com/codemarc/omnidock  
     cd omnidock  
-    ./omni.sh update  
+    ./omni.sh update
+    ./omni.sh init  
     ./omni.sh up  
 
 
