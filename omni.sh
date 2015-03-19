@@ -22,7 +22,8 @@ if [ $# -lt 1 ]; then
    echo "  down      stops and removes test environment"
    echo "  update    updates oiw images and scripts"
    echo "  init      initializes content"
-   echo "  ip        lists known ip addresses"        
+   echo "  ssh       ssh to the named container"
+   echo "  ip        lists known ip addresses"
    echo
    echo
    exit
@@ -43,6 +44,20 @@ if [ "$1" = "ip" ]; then
 
    exit   
 fi
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# ssh
+if [ "$1" = "ssh" ]; then
+   if [ $# -lt 2 ]; then
+      [ $(docker ps -qa | wc -w) -gt 0 ] && (echo "ssh requires a name:";echo "$(docker ps -a -q | xargs docker inspect --format='{{.Config.Hostname}}')")
+      echo
+   else
+      ssh ibi@$(docker inspect --format='{{.NetworkSettings.IPAddress}}' $2)
+   fi
+
+   exit   
+fi
+
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # init
