@@ -53,28 +53,34 @@ fi
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # up
+Check() {
+ 	rc=1
+	cc=$(docker ps -qa | wc -w)
+	if [ $cc -gt 0 ]; then 
+		docker ps -a -q | xargs docker inspect --format='{{.Name}}' | grep /$1 >/dev/null
+		rc=$?
+	fi
+	if [ $rc -eq 0 ]; then echo $1' is already up';fi
+}
+
 if [ "$1" = "up" ]; then
 
-	cc=$(docker info 2>/dev/null | grep Containers | cut -d':' -s -f2)
-	if [ $cc -gt 0 ]; then
-	   echo 
-	   echo "!!! Warning containers may already exist !!!"
+	Check postgres
+	if [ $rc -gt 0 ]; then 
+		docker run -d -h="postgres" --name postgres --dns=$hostip \
+	   		-p 5432:5432 postgres:9.4 2>&1 >/dev/null
+	   	sleep 4
+   		./postgres/init.sh
 	fi
-
-	docker run -d -h="postgres" --name postgres --dns=$hostip \
-	   -p 5432:5432 postgres:9.4 2>&1 >/dev/null
-	   
-	if [ $? -eq 0 ]; then
-	   ./postgres/init.sh;
-	fi
-
-	docker run -d -h="ism" --name ism --dns=$hostip --env sentinel=$hostip \
-		-P -p 9999:9999 -p 9000:9000 -p 9001:9001 -p 9022:22 \
-		cibi/ism:7.0.2 2>&1 >/dev/null
 	
-	echo	
-	docker ps -a
-	echo
+	Check ism
+	if [ $rc -gt 0 ]; then
+		docker run -d -h="ism" --name ism --dns=$hostip --env sentinel=$hostip \
+			-P -p 9999:9999 -p 9000:9000 -p 9001:9001 -p 9022:22 \
+		cibi/ism:7.0.2 2>&1 >/dev/null
+	fi
+	
+	$0 ip
 	exit
 fi
 
