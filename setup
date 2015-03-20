@@ -1,3 +1,5 @@
+# setup omni integrators workbench environment
+
 # Calculate and Get the Latest Copy of 
 if [ ! -f "./ism/omni.zip" ]; then
    iomni=http://iomnibld:8081/nexus/content/repositories/snapshots/com/iwaysoftware/omni/Workbench/2.0.0-SNAPSHOT
@@ -19,13 +21,26 @@ fi
 boot2docker init
 boot2docker start
 boot2docker ip
-boot2docker ssh "sudo ln -s /c/Users/mg01685/omnidock /home/docker/omnidock"
+boot2docker ssh "ln -s /c/Users/$USERNAME/omnidock /home/docker/omnidock"
 
-# 
-# Add Omnidock as a shared folder
-#"$PROGRAMW6432\Oracle\VirtualBox\VBoxManage.exe" sharedfolder add "boot2docker-vm" \
-#--name omnidock --hostpath $HOMEDRIVE$HOMEPATH\\omnidock --automount 
+# Add a script to get to ism
+if [ ! -f "$HOMEDRIVE$HOMEPATH\Desktop\ismShell.lnk" ]; then
+   cat > ssh2ism.sh << EOF
+#!/bin/bash
+ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $(boot2docker ip):9022
+EOF
+   cat >  CreateShortcut.vbs << EOF
+   Set oWS = WScript.CreateObject("WScript.Shell")
+   Set oLink = oWS.CreateShortcut("$HOMEDRIVE$HOMEPATH\Desktop\ismShell.lnk")
+   oLink.TargetPath = "$PROGRAMFILES\Git\bin\sh.exe"
+   oLink.Arguments="--login -i ssh2ism.sh"
+   oLink.WorkingDirectory ="$HOMEDRIVE$HOMEPATH\omnidock"
+   oLink.Save
+EOF
+   cscript //nologo CreateShortcut.vbs
+   rm CreateShortcut.vbs
 
+fi
 
 
 # Create Shortcut to working dir
