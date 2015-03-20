@@ -1,0 +1,45 @@
+# Calculate and Get the Latest Copy of 
+if [ ! -f "./ism/omni.zip" ]; then
+   iomni=http://iomnibld:8081/nexus/content/repositories/snapshots/com/iwaysoftware/omni/Workbench/2.0.0-SNAPSHOT
+   curl -o maven-metadata.xml $iomni/maven-metadata.xml
+   ts=$(cat maven-metadata.xml | grep '<timestamp'   | cut -f2 -d">"|cut -f1 -d"<")
+   bn=$(cat maven-metadata.xml | grep '<buildNumber' | cut -f2 -d">"|cut -f1 -d"<")
+
+   echo Getting Workbench-2.0.0-$ts-$bn.zip as omni.zip
+   curl -o ./ism/omni.zip $iomni/Workbench-2.0.0-$ts-$bn.zip
+   rm maven-metadata.xml
+fi
+
+
+# Unzip omni if needed
+[ ! -d "./ism/OmniPatient" ] && unzip -d ./ism/ -q ./ism/omni.zip
+
+
+# Create & start the Machine if its not there
+boot2docker init
+boot2docker start
+boot2docker ip
+boot2docker ssh "sudo ln -s /c/Users/mg01685/omnidock /home/docker/omnidock"
+
+# 
+# Add Omnidock as a shared folder
+#"$PROGRAMW6432\Oracle\VirtualBox\VBoxManage.exe" sharedfolder add "boot2docker-vm" \
+#--name omnidock --hostpath $HOMEDRIVE$HOMEPATH\\omnidock --automount 
+
+
+
+# Create Shortcut to working dir
+if [ ! -f "$HOMEDRIVE$HOMEPATH\Desktop\Omni Integrators WorkBench.lnk" ]; then
+   cat >  CreateShortcut.vbs << EOF
+   Set oWS = WScript.CreateObject("WScript.Shell")
+   Set oLink = oWS.CreateShortcut("$HOMEDRIVE$HOMEPATH\Desktop\Omni Integrators WorkBench.lnk")
+   oLink.TargetPath = "$SYSTEMROOT\explorer.exe"
+   oLink.Arguments="$HOMEDRIVE$HOMEPATH\omnidock\ism\OmniPatient"
+   oLink.Save
+EOF
+
+   cscript //nologo CreateShortcut.vbs
+   rm CreateShortcut.vbs
+fi
+
+
