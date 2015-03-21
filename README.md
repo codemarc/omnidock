@@ -25,22 +25,32 @@ You use the Boot2Docker client to control the virtualized Docker Engine thru ssh
 
 ##### Up and running
 
-1. Create the Omni account for testing and login to it. If you are using an older PC you may need to enable the hardware virtiualization setting in the bios.  
+1. Create the Omni account for testing and login to it.  
 
-1. Download and run the latest all the way thru, (it may require a full reboot).
+1. Download and run the latest boot2docker install. all the way thru (it may require a full reboot).  If you are using an older PC you may need to enable the hardware virtiualization setting in the bios.  
 
-1. From the Desktop run the "Boot2Docker Start". This shortcut starts actually starts a platform specific bash shell and runs enough initialization script docker available.
+1. From the Desktop run the "Boot2Docker Start" (windows) or the "boot2docker" app (mac) . This shortcut starts actually starts a platform specific bash shell and runs enough initialization to make docker available.
 
-1. Then issue the following commands from the boot2docker machine:
+	* **Windows**:
+	You should use the "**Git Bash**" shell to complete this step (installed with boot2docker ). Press the windows key (or ctrl-escape) and type the word ***git*** in the search box. Finally run "**Git Bash**" to continue.
+	
+	* **Mac OSX**:
+	bash shell is native on mac, so when you run the "boot2docker" app on the mac you are left in an appropiate shell.
+	
+1. Heres the current plan. we will clone a version of the omnidock scripts from git hub into our users local directory and then run out cloned setup script to complete the process.Issue the following commands:
 
     git clone https://github.com/codemarc/omnidock  
     cd omnidock  
+    ./setup
+    
+1. If the setup script works you will now be logged into the boot2docker machine at the command prompt with ascii docker logo. The command sequence from here is 
+        
     ./omni.sh update  
     ./omni.sh init  
     ./omni.sh up  
 
 
-At this point you should have a valid docker machine (boot2docker client is at 192.168.59.103) available to your development environment, with the integrators tooling available. You should validate your connection with the database by using pgAdmin and connecting to the postgres instance at 192.168.59.103:5432. You should find the omni database with the healthviews schema. 
+At this point you should have a docker machine (boot2docker ip with is usually 192.168.59.103) available to your development environment, with the integrators tooling available. You should validate your connection with the database by using pgAdmin and connecting to the postgres instance at 192.168.59.103:5432. You should find the omni database with the healthviews schema. 
 
 ##### Done for now
 
@@ -59,9 +69,17 @@ So it all works and now its time to move on to something else. If you want to su
 	$ boot2docker poweroff
 	
 	> fin
+
+<br/><br/>
+
+----
+### PLEASE NOTE:
+This process is currently under development, your mileage may vary.
 	
 #### Contact Info
 If you have any questions or comments please feel free to reach out via email [marc_greenberg@ibi.com](mailto:marc_greenberg@ibi.com)
+
+
 
     
 	
