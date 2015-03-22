@@ -103,12 +103,9 @@ if [ "$1" = "up" ]; then
    
    Check ism
    if [ $rc -gt 0 ]; then
-      docker run -it --rm -h="ism" --name ism --dns=$hostip --env sentinel=$hostip \
+      docker run -d --rm -h="ism" --name ism --dns=$hostip --env sentinel=$hostip \
          -P -p 9999:9999 -p 9000:9000 -p 9001:9001 -p 9022:22 \
-         -v $(pwd)/ism/OmniPatient:/ibi \
-         cibi/base /bin/bash 
-         
-         #2>&1 >/dev/null
+         -v $(pwd)/ism/OmniPatient:/ibi cibi/omni 2>&1 >/dev/null
    fi
    
    $0 ip
