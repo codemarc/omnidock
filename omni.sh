@@ -75,16 +75,7 @@ fi
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # update
 if [ "$1" = "update" ]; then
-
-   srcloc="http://iomnibld:8081/nexus/content/repositories/snapshots/com/iwaysoftware/omni/Workbench-Upgrade/2.0.0-SNAPSHOT"
-   srcname=Workbench-Upgrade-2.0.0-20150318.161535-10.zip
-   [ ! -f ./ism/$srcname ] && wget -P ./ism $srcloc/$srcname
-   cd ism 
-   rm -rf Omni*
-   unzip *.zip
-   cd ..
-   
-   docker pull cibi/ism:7.0.2
+   docker build -f ./ism/Dockerfile -t cibi/omni ./ism/
    docker pull postgres:9.4
    docker images
    echo
@@ -112,10 +103,12 @@ if [ "$1" = "up" ]; then
    
    Check ism
    if [ $rc -gt 0 ]; then
-      docker run -d -h="ism" --name ism --dns=$hostip --env sentinel=$hostip \
+      docker run -it --rm -h="ism" --name ism --dns=$hostip --env sentinel=$hostip \
          -P -p 9999:9999 -p 9000:9000 -p 9001:9001 -p 9022:22 \
          -v $(pwd)/ism/OmniPatient:/ibi \
-         cibi/ism:7.0.2 2>&1 >/dev/null
+         cibi/base /bin/bash 
+         
+         #2>&1 >/dev/null
    fi
    
    $0 ip
