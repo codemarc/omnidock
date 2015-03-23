@@ -1,13 +1,28 @@
-#!/bin/ash
+# Build the cibi/omni container in the default shell.
+# Please note this script has specifically omitted
+# the hash-bang bin/bash or bin/ash directive with
+# the intent to run in the default shell.
 
 #set my name and version
 vibi=0.3
 
 # get my host name and ip address
 hostnm=$(hostname)
-hostip=$(/sbin/ifconfig eth0 |  grep "inet addr" |  cut -d':' -s -f2 | cut -d' ' -f1)
-[ "$hostip" = "" ] && hostip=$(/sbin/ifconfig eth1 |  grep "inet addr" |  cut -d':' -s -f2 | cut -d' ' -f1)
-[ "$hostip" = "" ] && hostip=$(/sbin/ifconfig docker0 |  grep "inet addr" |  cut -d':' -s -f2 | cut -d' ' -f1)
+
+
+getmyip() {
+   hostip=$(/sbin/ifconfig $1 |  grep "inet addr" |  cut -d':' -s -f2 | cut -d' ' -f1)
+}   
+
+boot2docker 2>/dev/null
+if [ $? -eq 0 ]; then
+   hostip=$(boot2docker ip)
+else
+   getmyip eth0
+   [ "$hostip" = "" ] && getmyip eth1
+   [ "$hostip" = "" ] && getmyip docker0
+fi 
+
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Help 

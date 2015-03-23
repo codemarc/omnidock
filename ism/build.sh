@@ -1,7 +1,8 @@
 # Build the cibi/omni container in the default shell.
 # Please note this script has specifically omitted
-# the hash-band bin/bash or bin/ash directive with
+# the hash-bang bin/bash or bin/ash directive with
 # the intent to run in the default shell.
+
 clear
 echo "---> Building cibi/omni from $0"
 echo

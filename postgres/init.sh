@@ -1,4 +1,7 @@
-#!/bin/ash
+# Please note this script has specifically omitted
+# the hash-bang bin/bash or bin/ash directive with
+# the intent to run in the default shell.
+
 cat <<- EOF > init.sql
 	CREATE DATABASE omni;
 	\connect omni;

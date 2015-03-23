@@ -1,5 +1,7 @@
 #!/bin/bash
 if [ "$sentinel" = "" ]; then sentinel="localhost";fi
 echo $sentinel sentinel >> /etc/hosts
-/ibi/iway7/bin/startservice.sh base
+chmod +x /ibi/iway7/iway7.sh
+cd iway7
+./iway7.sh base > /dev/null 2>&1 &
 /usr/sbin/sshd -D
