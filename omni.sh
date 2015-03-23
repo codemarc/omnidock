@@ -40,6 +40,7 @@ if [ $# -lt 1 ]; then
    echo "  build     build container updates"
    echo "  ssh       ssh to the named container"
    echo "  ip        lists known ip addresses"
+   echo "  upgrade   upgrades the workbench" 
    echo
    echo
    exit
@@ -162,5 +163,19 @@ if [ "$1" = "down" ]; then
    StopRemove postgres
    echo
    exit
+fi
+ 
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# upgrade
+if [ "$1" = "upgrade" ]; then
+	echo "$0 down"   &&  $0 down
+	echo "$0 update" &&  $0 update 
+	echo "$0 build"  &&  $0 build
+	echo "$0 up"     &&  $0 up
+	sleep 5s     
+	echo "$0 init"   &&  $0 init
+    echo
+    exit   
 fi
  

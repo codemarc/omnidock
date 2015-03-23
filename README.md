@@ -47,12 +47,9 @@ You use the Boot2Docker client to control the virtualized Docker Engine thru ssh
 1. If the setup script works you will now be logged into the boot2docker machine at the command prompt with ascii docker logo. The command sequence from here is 
 
 	cd omnidock        
-    ./omni.sh update
-    ./omni.sh build
-    ./omni.sh up  
-    ./omni.sh init  
+    ./omni.sh upgrade
 
-At this point you should have a docker machine (boot2docker ip with is usually 192.168.59.103) available to your development environment, with the integrators tooling available. You should validate your connection with the database by using pgAdmin and connecting to the postgres instance at 192.168.59.103:5432. You should find the omni database with the healthviews schema. 
+At this point you should have a docker machine (boot2docker ip is usually 192.168.59.103) available to your development environment, with the integrators tooling available. You should validate your connection with the database by using pgAdmin and connecting to the postgres instance at 192.168.59.103:5432. You should find the omni database with the healthviews schema. 
 
 ##### Done for now
 
