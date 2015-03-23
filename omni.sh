@@ -1,7 +1,7 @@
 #!/bin/ash
 
 #set my name and version
-vibi=0.2
+vibi=0.3
 
 # get my host name and ip address
 hostnm=$(hostname)
@@ -22,6 +22,7 @@ if [ $# -lt 1 ]; then
    echo "  down      stops and removes test environment"
    echo "  update    updates oiw images and scripts"
    echo "  init      initializes content"
+   echo "  build     build container updates"
    echo "  ssh       ssh to the named container"
    echo "  ip        lists known ip addresses"
    echo
@@ -60,6 +61,19 @@ fi
 
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# build
+if [ "$1" = "build" ]; then
+    if [ $# -lt 2 ]; then
+       $0 $1 postgres
+       $0 $1 ism
+    else
+      ./$2/build.sh   
+    fi
+    echo
+    exit   
+fi
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # init
 if [ "$1" = "init" ]; then
     if [ $# -lt 2 ]; then
@@ -75,7 +89,7 @@ fi
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # update
 if [ "$1" = "update" ]; then
-   docker build -f ./ism/Dockerfile -t cibi/omni ./ism/
+   docker pull cibi/base
    docker pull postgres:9.4
    docker images
    echo
@@ -103,7 +117,7 @@ if [ "$1" = "up" ]; then
    
    Check ism
    if [ $rc -gt 0 ]; then
-      docker run -d --rm -h="ism" --name ism --dns=$hostip --env sentinel=$hostip \
+      docker run -d -h="ism" --name ism --dns=$hostip --env sentinel=$hostip \
          -P -p 9999:9999 -p 9000:9000 -p 9001:9001 -p 9022:22 \
          -v $(pwd)/ism/OmniPatient:/ibi cibi/omni 2>&1 >/dev/null
    fi
