@@ -2,13 +2,18 @@
 # the hash-bang bin/bash or bin/ash directive with
 # the intent to run in the default shell.
 
-cat <<- EOF > init.sql
-	CREATE DATABASE omni;
-	\connect omni;
-	CREATE SCHEMA healthviews;
-EOF
+# Save for later
+# CREATE SCHEMA healthviews;
+# cat postgres/postgre.hv_1.1.1_fk_1.0.0.0.sql >> init.sql
 
-cat postgres/postgre.hv_1.1.1_fk_1.0.0.0.sql >> init.sql
+cat <<- EOF > init.sql
+  CREATE DATABASE dqrepo WITH OWNER = dqrepo;
+  \connect dqrepo;
+  CREATE ROLE dqrepo LOGIN PASSWORD dqrepo' SUPERUSER INHERIT CREATEDB CREATEROLE REPLICATION;
+  CREATE DATABASE patient WITH OWNER = patient;
+  \connect patient;
+  CREATE ROLE patient LOGIN PASSWORD 'patient' SUPERUSER INHERIT CREATEDB CREATEROLE REPLICATION;
+EOF
 
 docker run -it  --link postgres:postgres --rm -v $(pwd):/psql postgres:9.4 \
 sh -c 'exec psql -h postgres -p 5432 -U postgres -f /psql/init.sql' 

@@ -71,6 +71,7 @@ if [ ! -d "$omniapp" ]; then
    echo "  adding/upgrading postgres jdbc drivers"
    cp postgres/postgres*.jar $omniapp/iway7/config/OmniPatient/lib/
    cp postgres/postgres*.jar $omniapp/mastering/runtime/lib
+   cp postgres/postgres*.jar $omniapp/cmd/lib
    
    echo "  replacing DIB.Properties"
    cp ./ism/DIB.properties $omniapp/iway7/config/OmniPatient/resource/DIB.properties

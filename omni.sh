@@ -144,6 +144,7 @@ if [ "$1" = "up" ]; then
    Check ism
    if [ $rc -gt 0 ]; then
       docker run -d -h="ism" --name ism --dns=$hostip --env sentinel=$hostip \
+         --link postgres:postgres \
          -P -p 9999:9999 -p 9000:9000 -p 9001:9001 -p 9022:22 \
          -v $(pwd)/ism/OmniPatient:/ibi cibi/omni 2>&1 >/dev/null
    fi
