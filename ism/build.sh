@@ -68,6 +68,12 @@ if [ ! -d "$omniapp" ]; then
    echo "  missing !!! so try to unzip it from $omnizip"
    unzip -qq -d ./ism/ ./ism/omni.zip
    echo
+   echo "  adding/upgrading postgres jdbc drivers"
+   cp postgres/postgres*.jar $omniapp/iway7/config/OmniPatient/lib/
+   cp postgres/postgres*.jar $omniapp/mastering/runtime/lib
+   
+   echo "  replacing DIB.Properties"
+   cp ./ism/DIB.properties $omniapp/iway7/config/OmniPatient/resource/DIB.properties
 fi
 
 if [ ! -d "$omniapp" ]; then
