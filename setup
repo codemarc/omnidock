@@ -4,20 +4,9 @@ echo "Running on $(uname)"
 
 if [ "$OS" == "Windows_NT" ]; then
 
-   # Add a script to get to ism
-   if [ ! -f "$HOMEDRIVE$HOMEPATH\Desktop\ismShell.lnk" ]; then
-      cat > CreateShortcut.vbs << EOF
-      Set oWS = WScript.CreateObject("WScript.Shell")
-      Set oLink = oWS.CreateShortcut("$HOMEDRIVE$HOMEPATH\Desktop\ismShell.lnk")
-      oLink.TargetPath = "$PROGRAMFILES\Git\bin\sh.exe"
-      oLink.Arguments="--login -i ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $(boot2docker ip):9022"
-      oLink.WorkingDirectory ="$HOMEDRIVE$HOMEPATH\omnidock"
-      oLink.Save
-EOF
-      cscript //nologo CreateShortcut.vbs
-      rm CreateShortcut.vbs
-   fi
-
+   # remove shell link
+   [ -f "$HOMEDRIVE$HOMEPATH\Desktop\ismShell.lnk" ] && rm "$HOMEDRIVE$HOMEPATH\Desktop\ismShell.lnk"
+    
    # Create Shortcut to working dir
    if [ ! -f "$HOMEDRIVE$HOMEPATH\Desktop\Omni Integrators WorkBench.lnk" ]; then
       cat >  CreateShortcut.vbs << EOF
