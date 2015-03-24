@@ -139,6 +139,9 @@ if [ "$1" = "up" ]; then
    if [ $rc -gt 0 ]; then 
       docker run -d -h="postgres" --name postgres --dns=$hostip \
             -p 5432:5432 postgres:9.4 2>&1 >/dev/null
+
+	  sleep 5s            
+      $0 init postgres            
    fi
    
    Check ism
@@ -147,6 +150,9 @@ if [ "$1" = "up" ]; then
          --link postgres:postgres \
          -P -p 9999:9999 -p 9000:9000 -p 9001:9001 -p 9022:22 \
          -v $(pwd)/ism/OmniPatient:/ibi cibi/omni 2>&1 >/dev/null
+         
+      sleep 5s   
+      $0 init ism         
    fi
    
    $0 ip
@@ -190,13 +196,13 @@ if [ "$1" = "upgrade" ]; then
 	
 	echo 'removing broken images'
     docker images | grep '<none>'| awk '{print $3}' | xargs docker rmi 2>/dev/null
-	
+    
 	echo "$0 update" &&  $0 update
-	 
+	
 	echo "$0 build"  &&  $0 build
+	
 	echo "$0 up"     &&  $0 up
-	sleep 5s     
-	echo "$0 init"   &&  $0 init
+	
     echo
     exit   
 fi

@@ -60,7 +60,7 @@ else
 fi
 
 
-
+echo
 echo "OmniPatient:"
 echo "  checking for $omniapp"
 
