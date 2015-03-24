@@ -25,7 +25,8 @@ fi
 
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# Help 
+# Help
+ 
 if [ $# -lt 1 ]; then
    echo "Running on $hostnm ($hostip)"
    echo
@@ -35,19 +36,21 @@ if [ $# -lt 1 ]; then
    echo "Commands:"
    echo "  up        creates and starts test environment"
    echo "  down      stops and removes test environment"
-   echo "  update    updates oiw images and scripts"
-   echo "  init      initializes content"
-   echo "  build     build container updates"
    echo "  ssh       ssh to the named container"
    echo "  ip        lists known ip addresses"
+   echo "  build     build container updates"
+   echo "  init      initializes content"
+   echo "  update    updates container images"
    echo "  upgrade   upgrades the workbench" 
    echo
    echo
    exit
 fi
 
+
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # ip
+
 if [ "$1" = "ip" ]; then
    if [ $# -lt 2 ]; then
       echo
@@ -58,12 +61,27 @@ if [ "$1" = "ip" ]; then
    else
       docker inspect --format='{{.NetworkSettings.IPAddress}}' $2
    fi
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# init
+
+if [ "$1" = "init" ]; then
+    if [ $# -lt 2 ]; then
+       $0 $1 postgres
+       $0 $1 ism
+    else
+      ./$2/init.sh   
+    fi
+    echo
+    exit   
+fi
 
    exit   
 fi
 
+
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # ssh
+
 if [ "$1" = "ssh" ]; then
    if [ $# -lt 2 ]; then
       [ $(docker ps -qa | wc -w) -gt 0 ] && (echo "ssh requires a name:";echo "$(docker ps -a -q | xargs docker inspect --format='{{.Config.Hostname}}')")
@@ -77,33 +95,23 @@ fi
 
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# build
-if [ "$1" = "build" ]; then
+# build/init
+
+if [ "$1" = "build" ] || [ "$1" = "init" ]; then
     if [ $# -lt 2 ]; then
        $0 $1 postgres
        $0 $1 ism
     else
-      ./$2/build.sh   
+      ./$2/$1.sh   
     fi
     echo
     exit   
 fi
 
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# init
-if [ "$1" = "init" ]; then
-    if [ $# -lt 2 ]; then
-       $0 $1 postgres
-       $0 $1 ism
-    else
-      ./$2/init.sh   
-    fi
-    echo
-    exit   
-fi
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # update
+
 if [ "$1" = "update" ]; then
    docker pull cibi/base
    docker pull postgres:9.4
@@ -112,8 +120,10 @@ if [ "$1" = "update" ]; then
    exit
 fi
 
+
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # up
+
 Check() {
    rc=1;cc=$(docker ps -qa | wc -w)
    if [ $cc -gt 0 ]; then 
@@ -142,8 +152,10 @@ if [ "$1" = "up" ]; then
    exit
 fi
 
+
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # down
+
  StopRemove() {
    docker inspect $1 2>/dev/null 1>/dev/null
    if [ $? -eq 0 ]; then 
@@ -168,9 +180,18 @@ fi
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # upgrade
+
 if [ "$1" = "upgrade" ]; then
-	echo "$0 down"   &&  $0 down
-	echo "$0 update" &&  $0 update 
+    git config --global core.autocrlf input
+    git pull
+    
+	echo "$0 down" && $0 down
+	
+	echo 'removing broken images'
+    docker images | grep '<none>'| awk '{print $3}' | xargs docker rmi 2>/dev/null
+	
+	echo "$0 update" &&  $0 update
+	 
 	echo "$0 build"  &&  $0 build
 	echo "$0 up"     &&  $0 up
 	sleep 5s     

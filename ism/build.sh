@@ -84,6 +84,7 @@ fi
 echo "---> Dockerizing "
 docker pull cibi/base
 docker build -t cibi/omni ./ism
+docker images | grep '<none>'| awk '{print $3}' | xargs docker rmi 2>/dev/null
 echo
 docker images
 
