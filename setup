@@ -1,7 +1,21 @@
 # Setup omni integrators workbench environment
-
+echo
 echo "Running on $(uname)"
+echo
 
+
+# add a script to get from git
+cat > upgrade << EOF
+echo
+echo 'update from git'
+git config --global core.autocrlf input
+git pull
+echo
+EOF
+chmod +x upgrade
+
+
+# add shell links on windows
 if [ "$OS" == "Windows_NT" ]; then
 
    # remove shell link
@@ -25,8 +39,8 @@ else
 fi
 
 
+# start boot2docker
 boot2docker version 2>/dev/null
-
 if [ ! "$OS" == "Linux" ]; then
    
    boot2docker init
@@ -47,7 +61,7 @@ if [ ! "$OS" == "Linux" ]; then
    hdo="/home/docker/omnidock"
    linkod="ln -Tfs $HOME/omnidock $hdo"
    if [ ! "$1" == "" ]; then linkod="ln -Tfs $1 $hdo";fi
-   echo "$linkod" && boot2docker ssh "if [ ! -d $hdo ]; then $linkod;fi"
+   boot2docker ssh "if [ ! -d $hdo ]; then $linkod;fi"
    
    boot2docker ssh
 fi
