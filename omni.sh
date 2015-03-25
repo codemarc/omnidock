@@ -12,7 +12,11 @@ hostnm=$(hostname)
 
 getmyip() {
    hostip=$(/sbin/ifconfig $1 |  grep "inet addr" |  cut -d':' -s -f2 | cut -d' ' -f1)
-}   
+}  
+
+removeoldimages() {
+  docker images | grep '<none>'| awk '{print $3}' | xargs docker rmi 2>/dev/null
+}
 
 boot2docker 2>/dev/null
 if [ $? -eq 0 ]; then
@@ -189,33 +193,11 @@ fi
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # upgrade
-op() {
-  echo
-  echo "$0 $1"
-  $0 $1
-}
 if [ "$1" = "upgrade" ]; then
-	op down
-	
-	echo 'update from git'
-    git config --global core.autocrlf input
-    git pull
-    echo
-	
-    
-    op update
-    op build
-    
-	echo 'removing old images'
-    docker images | grep '<none>'| awk '{print $3}' | xargs docker rmi 2>/dev/null
-    echo
-    docker images
-    echo
-    echo "done!"
-    
-    
-    #op up
-
+    echo && echo "$0 down" && $0 down
+    echo && echo "$0 update" && $0 update
+    removeoldimages
+    echo && echo "done!"
     exit   
 fi
  

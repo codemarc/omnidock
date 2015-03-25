@@ -14,3 +14,7 @@
 #sh -c 'exec psql -h postgres -p 5432 -U postgres -f /psql/init.sql' 
 #
 #rm init.sql
+
+docker run -it  --link postgres:postgres --rm -v $(pwd):/psql postgres:9.4 \
+sh -c 'exec pg_dump -h postgres -p 5432 -U patient' > patient.sql
+
