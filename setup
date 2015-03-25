@@ -28,17 +28,26 @@ fi
 boot2docker version 2>/dev/null
 
 if [ ! "$OS" == "Linux" ]; then
-   echo
+   
    boot2docker init
    boot2docker start
    boot2docker ip
-
-   #override if $1 not empty 
-   linkod="ln -f -s $HOME/omnidock omnidock"
-   if [ ! "$1" == "" ]; then linkod="ln -f -s $1 omnidock";fi
    
-   echo "$linkod"
-   boot2docker ssh "$linkod"
+   # clean up some stuff
+   boot2docker ssh "[ -f log.log ] && rm log.log" 2>/dev/null
+   boot2docker ssh "[ -f boot2docker,\ please\ format-me ] && rm boot2docker,\ please\ format-me" 2>/dev/null
+
+   # setup docker from host environment   
+   boot2docker shellinit > env.sh 
+   chmod +x env.sh 
+   ./env.sh 
+   rm env.sh
+
+   # link in omnidock (for now)
+   hdo="/home/docker/omnidock"
+   linkod="ln -Tfs $HOME/omnidock $hdo"
+   if [ ! "$1" == "" ]; then linkod="ln -Tfs $1 $hdo";fi
+   echo "$linkod" && boot2docker ssh "if [ ! -d $hdo ]; then $linkod;fi"
    
    boot2docker ssh
 fi

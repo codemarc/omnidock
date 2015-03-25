@@ -3,7 +3,7 @@
 # the hash-bang bin/bash or bin/ash directive with
 # the intent to run in the default shell.
 
-clear
+echo
 echo "---> Building cibi/omni from $0"
 echo
 echo "Working directory: $(pwd)"
@@ -72,9 +72,6 @@ if [ ! -d "$omniapp" ]; then
    cp postgres/postgres*.jar $omniapp/iway7/config/OmniPatient/lib/
    cp postgres/postgres*.jar $omniapp/mastering/runtime/lib
    cp postgres/postgres*.jar $omniapp/cmd/lib
-   
-   echo "  replacing DIB.Properties"
-   cp ./ism/DIB.properties $omniapp/iway7/config/OmniPatient/resource/DIB.properties
 fi
 
 if [ ! -d "$omniapp" ]; then
@@ -85,6 +82,8 @@ if [ ! -d "$omniapp" ]; then
    exit 1
 else 
   ls  -l $omniapp
+  echo "  replacing DIB.Properties"
+  cp ./ism/DIB.properties $omniapp/iway7/config/OmniPatient/resource/DIB.properties
   echo 
 fi
 

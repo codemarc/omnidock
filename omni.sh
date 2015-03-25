@@ -99,8 +99,8 @@ fi
 
 if [ "$1" = "build" ] || [ "$1" = "init" ]; then
     if [ $# -lt 2 ]; then
-       $0 $1 postgres
        $0 $1 ism
+       $0 $1 postgres
     else
       ./$2/$1.sh   
     fi
@@ -113,8 +113,10 @@ fi
 # update
 
 if [ "$1" = "update" ]; then
+   echo
    docker pull cibi/base
    docker pull postgres:9.4
+   echo
    docker images
    echo
    exit
@@ -138,7 +140,7 @@ if [ "$1" = "up" ]; then
    Check postgres
    if [ $rc -gt 0 ]; then 
       docker run -d -h="postgres" --name postgres --dns=$hostip \
-            -p 5432:5432 postgres:9.4 2>&1 >/dev/null
+            -p 5432:5432 cibi/postgres 2>&1 >/dev/null
 
 	  sleep 5s            
       $0 init postgres            
@@ -187,23 +189,33 @@ fi
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # upgrade
-
+op() {
+  echo
+  echo "$0 $1"
+  $0 $1
+}
 if [ "$1" = "upgrade" ]; then
+	op down
+	
+	echo 'update from git'
     git config --global core.autocrlf input
     git pull
-    
-	echo "$0 down" && $0 down
-	
-	echo 'removing broken images'
-    docker images | grep '<none>'| awk '{print $3}' | xargs docker rmi 2>/dev/null
-    
-	echo "$0 update" &&  $0 update
-	
-	echo "$0 build"  &&  $0 build
-	
-	echo "$0 up"     &&  $0 up
-	
     echo
+	
+    
+    op update
+    op build
+    
+	echo 'removing old images'
+    docker images | grep '<none>'| awk '{print $3}' | xargs docker rmi 2>/dev/null
+    echo
+    docker images
+    echo
+    echo "done!"
+    
+    
+    #op up
+
     exit   
 fi
  
