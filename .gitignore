@@ -1,4 +1,5 @@
-.project
-ism/OmniPatient
-ism/omni.zip
+/.project
+/ism/OmniPatient
+/ism/omni.zip
+/postgres/omni.*
 /upgrade

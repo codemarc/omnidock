@@ -114,20 +114,6 @@ fi
 
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# update
-
-if [ "$1" = "update" ]; then
-   echo
-   docker pull cibi/base
-   docker pull postgres:9.4
-   echo
-   docker images
-   echo
-   exit
-fi
-
-
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # up
 
 Check() {
@@ -145,8 +131,7 @@ if [ "$1" = "up" ]; then
    if [ $rc -gt 0 ]; then 
       docker run -d -h="postgres" --name postgres --dns=$hostip \
             -p 5432:5432 cibi/postgres 2>&1 >/dev/null
-
-	  sleep 5s            
+      
       $0 init postgres            
    fi
    
@@ -157,7 +142,6 @@ if [ "$1" = "up" ]; then
          -P -p 9999:9999 -p 9000:9000 -p 9001:9001 -p 9022:22 \
          -v $(pwd)/ism/OmniPatient:/ibi cibi/omni 2>&1 >/dev/null
          
-      sleep 5s   
       $0 init ism         
    fi
    
@@ -172,32 +156,40 @@ fi
  StopRemove() {
    docker inspect $1 2>/dev/null 1>/dev/null
    if [ $? -eq 0 ]; then 
-      echo "docker stop $1"
-      docker stop $1
-      echo " stopped"
-      echo
-      echo "docker rm $1"
-      docker rm $1
-      echo " removed"
-      echo
+      echo;echo "docker stop $1";docker stop $1;echo " stopped";echo
+      echo;echo "docker rm $1";docker rm $1;echo " removed";echo
    fi
  }  
 
 if [ "$1" = "down" ]; then
    StopRemove ism
    StopRemove postgres
+   echo;echo "docker ps -a";echo;docker ps -a;echo
+   exit
+fi
+
+ 
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# update
+
+if [ "$1" = "update" ]; then
+   echo
+   docker pull cibi/base
+   docker pull postgres:9.4
+   echo
+   docker images
    echo
    exit
 fi
- 
+
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # upgrade
 if [ "$1" = "upgrade" ]; then
-    echo && echo "$0 down" && $0 down
-    echo && echo "$0 update" && $0 update
+    echo;echo "$0 down";$0 down
+    echo;echo "$0 update";$0 update
     removeoldimages
-    echo && echo "done!"
+    echo;echo "done!"
     exit   
 fi
  

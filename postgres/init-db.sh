@@ -7,4 +7,6 @@ gosu postgres postgres --single <<- EOSQL
     CREATE DATABASE patient WITH OWNER = patient;
 EOSQL
 
-gosu postgres postgres --single < patient.zip
+gosu patient patient --single < /omni.patient
+
+gosu dqrepo dqrepo --single < /omni.dqrepo
