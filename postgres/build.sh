@@ -11,7 +11,7 @@ echo "  step 1: make sure all containers are down"
   ./omni.sh down 1>/dev/null 2>/dev/null
 
 echo  
-echo "  step 2: generate fresh $omni.patient and $omni.dqrepo"
+echo "  step 2: generate fresh $omni.sql"
 echo
 echo " step 2a: start a base postgres 9.4 as postgres"
 echo
@@ -47,35 +47,30 @@ echo
 
 
 echo
-echo " step 2d: dumping patient database to $omni.patient"
+echo " step 3: Dockerize the loaded container as cibi/postgres"
 echo
+echo "step 3a: save postgres as omnidb"
+echo
+
+  docker export $cdb | docker import - omnidb
   
-  docker run -it  --link postgres:postgres --rm -v $(pwd):/psql postgres:9.4 \
-  sh -c 'exec pg_dump -h postgres -p 5432 -U patient' > $omni.patient
-
 echo
-echo " step 2e: dumping dqrepo database to $omni.dqrepo"
-echo
-  
-  docker run -it  --link postgres:postgres --rm -v $(pwd):/psql postgres:9.4 \
-  sh -c 'exec pg_dump -h postgres -p 5432 -U dqrepo' >> $omni.dqrepo
-
-
-echo
-echo " step 2f: stop / remove again"
+echo "step 3b: stop / remove again"
 echo
 
   ./omni.sh down 1>/dev/null 2>/dev/null
-
+  
 echo
-echo "  step 3: dockerize the database"
-echo  
+echo "step 3c: build the image"
+echo
+
   docker build -t cibi/postgres ./postgres
 
 echo
-echo "  setp 4: cleanup old images"
+echo "  step 4: cleanup old images"
 echo
 
+  docker rmi omnidb
   docker images | grep '<none>'| awk '{print $3}' | xargs docker rmi 2>/dev/null
   echo  
   docker images  
