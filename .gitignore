@@ -1,5 +1,5 @@
 /.project
+/upgrade
 /ism/OmniPatient
 /ism/omni.zip
-/postgres/omni.sql
-/upgrade
+/postgres/omnidb.tar

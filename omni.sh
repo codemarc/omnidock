@@ -129,8 +129,16 @@ if [ "$1" = "up" ]; then
 
    Check postgres
    if [ $rc -gt 0 ]; then 
-      docker run -d -h="postgres" --name postgres --dns=$hostip \
-            -p 5432:5432 cibi/postgres 2>&1 >/dev/null
+      docker create -h="omnidata" --name omnidata -v /var/lib/postgresql/data postgres:9.4 \
+        2>&1 >/dev/null 
+       
+      docker run --rm --volumes-from omnidata  -v $(pwd)/postgres:/data postgres:9.4 \
+        tar -xf /data/omnidb.tar \
+        2>&1 >/dev/null 
+      
+      docker run -d -h="postgres" --name postgres --volumes-from omnidata \
+        -v /var/lib/postgresql/data -P -p 5432:5432 postgres:9.4 \
+        2>/dev/null 1>/dev/null
       
       $0 init postgres            
    fi
@@ -164,6 +172,7 @@ fi
 if [ "$1" = "down" ]; then
    StopRemove ism
    StopRemove postgres
+   docker rm omnidata 2>/dev/null 1>/dev/null
    echo;echo "docker ps -a";echo;docker ps -a;echo
    exit
 fi
