@@ -23,10 +23,12 @@ echo
 echo " step 2a: start a base postgres 9.4 as postgres"
 echo
 
-  cdb=$(docker run -d -h="postgres" --name postgres --volumes-from omnidata -P -p 5432:5432 postgres:9.4)
-  Sleep 3
-  docker ps -a
+    docker run -d -h="postgres" --name postgres --volumes-from omnidata \
+       -v /var/lib/postgresql/data -P -p 5432:5432 postgres:9.4 \
+       2>/dev/null 1>/dev/null
   
+    sleep 3
+    docker ps -a
   
 echo
 echo " step 2b: do some dba stuff"
@@ -56,7 +58,7 @@ echo " step 3: save the volume data as omnidb.tar"
 echo
 
   docker run --rm --volumes-from omnidata -v $(pwd)/postgres:/data \
-  cibi/base tar -cvf /data/omnidb.tar /var/lib/postgresql/data
+  postgres:9.4 tar -cvf /data/omnidb.tar /var/lib/postgresql/data
   
 echo
 echo "  step 4: stop / remove / cleanup"
