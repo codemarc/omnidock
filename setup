@@ -10,6 +10,10 @@ cat > upgrade << EOF
 alias d-cleanall='docker images -q | xargs docker rmi 2>/dev/null'
 alias d-down='docker ps -q | xargs docker stop'
 
+# for now
+mkdir -pv data data/input/in1 data/debug
+
+
 echo 'update from git'
 git config --global core.autocrlf input
 git pull

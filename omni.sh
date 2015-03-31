@@ -1,12 +1,15 @@
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# Build the cibi/omni container in the default shell.
 # Please note this script has specifically omitted
 # the hash-bang bin/bash or bin/ash directive with
-# the intent to run in the default shell.
+# the intent to run in either shell.
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-#set my name and version
+# set my name and version
 vibi=0.4
+
+# private registry
+repo=odin.ibi.com:5000
+ompc=$repo/cibi/omni
 
 # get my host name and ip address
 hostnm=$(hostname)
@@ -120,7 +123,7 @@ if [ "$1" = "init" ]; then
       docker create -h="omnidata" --name omnidata \
         -v /var/lib/postgresql/data postgres:9.4 2>&1 >/dev/null
       echo loading initial metadata into omnidata
-      docker run --rm --volumes-from omnidata -v $(pwd):/data postgres:9.4 \
+      docker run --rm --volumes-from omnidata -v $(pwd)/data:/data postgres:9.4 \
         tar -xzf /data/omnidb.tgz 
    fi
    
@@ -153,7 +156,7 @@ if [ "$1" = "up" ]; then
       docker run -d -h="ism" --name ism --dns=$hostip --env sentinel=$hostip \
          --link postgres:postgres \
          -P -p 9999:9999 -p 9000:9000 -p 9001:9001 -p 9022:22 \
-         -v $(pwd)/data:/omni/ids cibi/omni 2>&1 >/dev/null
+         -v $(pwd)/data:/omni $ompc 2>&1 >/dev/null
    fi
    
    $0 ip
@@ -182,8 +185,7 @@ fi
 if [ "$1" = "update" ]; then
    echo
    docker pull postgres:9.4
-   docker pull odin.ibi.com:5000/cibi/omni
-      
+   docker pull $repo/cibi/omni
    echo
    docker images
    echo
