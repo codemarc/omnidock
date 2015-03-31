@@ -11,7 +11,7 @@ alias d-cleanall='docker images -q | xargs docker rmi 2>/dev/null'
 alias d-down='docker ps -q | xargs docker stop'
 
 # for now
-mkdir -pv data data/input/in1 data/debug
+mkdir -p data data/input/in1 data/debug
 
 
 echo 'update from git'
@@ -34,7 +34,7 @@ if [ "$OS" == "Windows_NT" ]; then
       Set oWS = WScript.CreateObject("WScript.Shell")
       Set oLink = oWS.CreateShortcut("$HOMEDRIVE$HOMEPATH\Desktop\Omni Integrators WorkBench.lnk")
       oLink.TargetPath = "$SYSTEMROOT\explorer.exe"
-      oLink.Arguments="$HOMEDRIVE$HOMEPATH\omnidock\ism\OmniPatient"
+      oLink.Arguments="$HOMEDRIVE$HOMEPATH\omnidock\data"
       oLink.Save
 EOF
       cscript //nologo CreateShortcut.vbs
@@ -49,6 +49,7 @@ fi
 # start boot2docker
 boot2docker version 2>/dev/null
 if [ ! "$OS" == "Linux" ]; then
+   ./upgrade
    
    boot2docker init
    boot2docker start
