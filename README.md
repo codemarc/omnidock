@@ -6,7 +6,7 @@ Information Builders, Omni Applications are domain specific master data applicat
 The Omni Integrators Workbench on Docker (omnidock) is a defined process that can be used to run standalone validation of an integrators work product. This document will help you get started.
 
 ### Boot2Docker
-Monday, 16th March 2015
+Tuesday, 31st March 2015
 
 At the moment, docker uses linux-specific kernel features, so to run it on non-linux systems ( windows, mac osx ) you **must** use a virtual machine.
 
@@ -25,7 +25,7 @@ You use the Boot2Docker client to control the virtualized Docker Engine thru ssh
 
 ##### Up and running
 
-1. Create the Omni account for testing and login to it.  
+1. Create the Omni account for testing and login to it. ( Boot2Docker tries to auto-share your /Users (OSX) or C:\Users (Windows) directory )
 
 1. Download and run the latest boot2docker install. all the way thru (it may require a full reboot).  If you are using an older PC you may need to enable the hardware virtiualization setting in the bios.  
 
