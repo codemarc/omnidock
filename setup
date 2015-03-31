@@ -73,11 +73,21 @@ if [ ! "$OS" == "Linux" ]; then
    # add odin as a registry
    boot2docker ssh 'sudo sh -c "echo \"EXTRA_ARGS=\\\"--insecure-registry odin.ibi.com:5000\\\"\" > /var/lib/boot2docker/profile && sudo /etc/init.d/docker restart"'
       
-   boot2docker ip
+   bip=$(boot2docker ip)
+   echo $bip
+   
+   if [ "$OS" == "Windows_NT" ]; then
+      cat >  CreateShortcut.vbs << EOF
+      Set oWS = WScript.CreateObject("WScript.Shell")
+      Set oLink = oWS.CreateShortcut("$HOMEDRIVE$HOMEPATH\Desktop\Omni-iWay Service Manager.url")
+      oLink.TargetPath = "http://$bip:9999"
+      oLink.Save
+EOF
+      cscript //nologo CreateShortcut.vbs
+      rm CreateShortcut.vbs
+   fi         
+   
    boot2docker ssh
-   
-   
-   
 fi
 echo
 

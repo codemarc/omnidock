@@ -5,7 +5,7 @@
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # set my name and version
-vibi=0.4
+vibi=0.5
 
 # private registry
 repo=odin.ibi.com:5000
@@ -67,6 +67,7 @@ if [ $# -lt 1 ]; then
    echo "Commands:"
    echo "  ip        lists known ip addresses"
    echo "  ssh       ssh to the named container"
+   echo "  logs      show the logs of the named container"
    echo "  up        creates and starts test environment"
    echo "  down      stops and removes test environment"
    echo "  update    updates container images"
@@ -100,6 +101,20 @@ if [ "$1" = "ssh" ]; then
       echo
    else
       ssh ibi@$(docker inspect --format='{{.NetworkSettings.IPAddress}}' $2)
+   fi
+   exit   
+fi
+
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# logs
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+if [ "$1" = "logs" ]; then
+   if [ $# -lt 2 ]; then
+      [ $(docker ps -qa | wc -w) -gt 0 ] && (echo "ssh requires a name:";echo "$(docker ps -a -q | xargs docker inspect --format='{{.Config.Hostname}}')")
+      echo
+   else
+      docker logs $2 $3 $4 $5
    fi
    exit   
 fi
@@ -157,6 +172,9 @@ if [ "$1" = "up" ]; then
          --link postgres:postgres \
          -P -p 9999:9999 -p 9000:9000 -p 9001:9001 -p 9022:22 \
          -v $(pwd)/data:/omni $ompc 2>&1 >/dev/null
+         
+      docker logs ism
+      
    fi
    
    $0 ip
@@ -186,6 +204,7 @@ if [ "$1" = "update" ]; then
    echo
    docker pull postgres:9.4
    docker pull $repo/cibi/omni
+   removeoldimages
    echo
    docker images
    echo
