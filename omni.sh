@@ -107,11 +107,6 @@ fi
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 if [ "$1" = "init" ]; then
 
-   if [ "$2" = "odin" ]; then
-      sed -i 's/#DOCKER_OPTS=.*/DOCKER_OPTS="--insecure-registry odin.ibi.com:5000"/' /etc/default/docker
-      exit
-   fi
-
    if [ "$2" = "all" ]; then
       stopremove ism
       stopremove postgres
@@ -187,8 +182,8 @@ fi
 if [ "$1" = "update" ]; then
    echo
    docker pull postgres:9.4
-   
-   
+   docker pull odin.ibi.com:5000/cibi/omni
+      
    echo
    docker images
    echo

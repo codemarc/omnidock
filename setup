@@ -64,9 +64,15 @@ if [ ! "$OS" == "Linux" ]; then
    linkod="ln -Tfs $HOME/omnidock $hdo"
    if [ ! "$1" == "" ]; then linkod="ln -Tfs $1 $hdo";fi
    boot2docker ssh "if [ ! -d $hdo ]; then $linkod;fi"
-   
-   boot2docker ip   
+
+   # add odin as a registry
+   boot2docker ssh 'sudo sh -c "echo \"EXTRA_ARGS=\\\"--insecure-registry odin.ibi.com:5000\\\"\" > /var/lib/boot2docker/profile && sudo /etc/init.d/docker restart"'
+      
+   boot2docker ip
    boot2docker ssh
+   
+   
+   
 fi
 echo
 
