@@ -107,6 +107,11 @@ fi
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 if [ "$1" = "init" ]; then
 
+   if [ "$2" = "odin" ]; then
+      sed -i 's/#DOCKER_OPTS=.*/DOCKER_OPTS="--insecure-registry odin.ibi.com:5000"/' /etc/default/docker
+      exit
+   fi
+
    if [ "$2" = "all" ]; then
       stopremove ism
       stopremove postgres
