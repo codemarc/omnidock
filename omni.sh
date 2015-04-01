@@ -170,7 +170,8 @@ if [ "$1" = "up" ]; then
    if [ $rc -gt 0 ]; then
       docker run -d -h="ism" --name ism --dns=$hostip --env sentinel=$hostip \
          --link postgres:postgres \
-         -P -p 9999:9999 -p 9000:9000 -p 9001:9001 -p 9022:22 \
+         -P -p 9999:9999 -p 9000:9000 -p 9001:9001 -p 9022:22   \
+            -p 6199:6199 -p 9502:9502 -p 9504:9504 -p 9506:9506 \
          -v $(pwd)/data:/omni $ompc 2>&1 >/dev/null
          
       docker logs ism

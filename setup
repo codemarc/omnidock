@@ -11,7 +11,7 @@ echo "Running on $OS"
 # Set the omnidock location
 if [ "$1" == "" ]; then ODOCK=$HOME/omnidock;else ODOCK=$1;fi
  
-# add a to update the omnidock files
+# add to update the omnidock files
 mkdir -p $ODOCK && cd $ODOCK
 
 
@@ -21,7 +21,7 @@ alias d-cleanall='docker images -q | xargs docker rmi 2>/dev/null'
 alias d-down='docker ps -q | xargs docker stop'
 
 # create some missing directories
-mkdir -p data data/input/in1 data/debug
+mkdir -p data data/input/in1 data/debug data/error
 
 # update files from github
 echo 'update from git'
