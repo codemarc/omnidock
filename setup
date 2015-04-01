@@ -14,6 +14,7 @@ if [ "$1" == "" ]; then ODOCK=$HOME/omnidock;else ODOCK=$1;fi
 # add a to update the omnidock files
 mkdir -p $ODOCK && cd $ODOCK
 
+
 cat > upgrade << EOF
 # some useful aliases - activate by "source ./upgrade"
 alias d-cleanall='docker images -q | xargs docker rmi 2>/dev/null'
@@ -72,7 +73,7 @@ if [ ! "$OS" == "Linux" ]; then
       Set oWS = WScript.CreateObject("WScript.Shell")
       Set oLink = oWS.CreateShortcut("$HOME\Desktop\Omni Integrators WorkBench.lnk")
       oLink.TargetPath = "$SYSTEMROOT\explorer.exe"
-      oLink.Arguments="$ODOCK\data"
+      oLink.Arguments="$USERPROFILE\omnidock\data"
       oLink.Save
       Set oLink = oWS.CreateShortcut("$HOME\Desktop\OmniPatient Service Monitor.url")
       oLink.TargetPath = "http://$bip:9999/ism/appc?configuration=OmniPatient"
