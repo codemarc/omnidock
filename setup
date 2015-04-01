@@ -1,55 +1,35 @@
+#
 # Setup omni integrators workbench environment
+#
+[ ! "$OS" == "Windows_NT" ] && OS=$(uname)
 echo
-echo "Running on $(uname)"
+echo "Running on $OS"
 echo
 
-
-# add a script to get from git
+# add a to update the omnidock files
 cat > upgrade << EOF
 # some useful aliases - activate by "source ./upgrade"
 alias d-cleanall='docker images -q | xargs docker rmi 2>/dev/null'
 alias d-down='docker ps -q | xargs docker stop'
 
-# for now
+# create some missing directories
 mkdir -p data data/input/in1 data/debug
 
-
+# update files from github
 echo 'update from git'
 git config --global core.autocrlf input
 git pull
 echo
 EOF
+
+# make the script runnable and run it
 chmod +x upgrade
-
-
-# add shell links on windows
-if [ "$OS" == "Windows_NT" ]; then
-
-   # remove shell link
-   [ -f "$HOMEDRIVE$HOMEPATH\Desktop\ismShell.lnk" ] && rm "$HOMEDRIVE$HOMEPATH\Desktop\ismShell.lnk"
-    
-   # Create Shortcut to working dir
-   if [ ! -f "$HOMEDRIVE$HOMEPATH\Desktop\Omni Integrators WorkBench.lnk" ]; then
-      cat >  CreateShortcut.vbs << EOF
-      Set oWS = WScript.CreateObject("WScript.Shell")
-      Set oLink = oWS.CreateShortcut("$HOMEDRIVE$HOMEPATH\Desktop\Omni Integrators WorkBench.lnk")
-      oLink.TargetPath = "$SYSTEMROOT\explorer.exe"
-      oLink.Arguments="$HOMEDRIVE$HOMEPATH\omnidock\data"
-      oLink.Save
-EOF
-      cscript //nologo CreateShortcut.vbs
-      rm CreateShortcut.vbs
-   fi
-
-else
-   OS=$(uname)   
-fi
+./upgrade
 
 
 # start boot2docker
-boot2docker version 2>/dev/null
 if [ ! "$OS" == "Linux" ]; then
-   ./upgrade
+   boot2docker version 2>/dev/null
    
    boot2docker init
    boot2docker start
@@ -76,16 +56,26 @@ if [ ! "$OS" == "Linux" ]; then
    bip=$(boot2docker ip)
    echo $bip
    
+   # add shell links on windows
    if [ "$OS" == "Windows_NT" ]; then
-      cat >  CreateShortcut.vbs << EOF
+      # remove old shell links
+      [ -f "$HOMEDRIVE$HOMEPATH\Desktop\ismShell.lnk" ] && rm "$HOMEDRIVE$HOMEPATH\Desktop\ismShell.lnk"
+      [ -f "$HOMEDRIVE$HOMEPATH\Desktop\Omni Integrators WorkBench.lnk" ] && rm "$HOMEDRIVE$HOMEPATH\Desktop\Omni Integrators WorkBench.lnk"
+    
+      # Create Shortcut to working dir
+      cat >  CreateShortcuts.vbs << EOF
       Set oWS = WScript.CreateObject("WScript.Shell")
-      Set oLink = oWS.CreateShortcut("$HOMEDRIVE$HOMEPATH\Desktop\Omni-iWay Service Manager.url")
+      Set oLink = oWS.CreateShortcut("$HOMEDRIVE$HOMEPATH\Desktop\Omni Integrators WorkBench.lnk")
+      oLink.TargetPath = "$SYSTEMROOT\explorer.exe"
+      oLink.Arguments="$HOMEDRIVE$HOMEPATH\omnidock\data"
+      oLink.Save
+      Set oLink = oWS.CreateShortcut("$HOMEDRIVE$HOMEPATH\Desktop\OmniPatient Service Manitor.url")
       oLink.TargetPath = "http://$bip:9999"
       oLink.Save
 EOF
-      cscript //nologo CreateShortcut.vbs
-      rm CreateShortcut.vbs
-   fi         
+      cscript //nologo CreateShortcuts.vbs
+      rm CreateShortcuts.vbs
+   fi
    
    boot2docker ssh
 fi
