@@ -69,8 +69,8 @@ if [ ! "$OS" == "Linux" ]; then
       oLink.TargetPath = "$SYSTEMROOT\explorer.exe"
       oLink.Arguments="$HOMEDRIVE$HOMEPATH\omnidock\data"
       oLink.Save
-      Set oLink = oWS.CreateShortcut("$HOMEDRIVE$HOMEPATH\Desktop\OmniPatient Service Manitor.url")
-      oLink.TargetPath = "http://$bip:9999"
+      Set oLink = oWS.CreateShortcut("$HOMEDRIVE$HOMEPATH\Desktop\OmniPatient Service Monitor.url")
+      oLink.TargetPath = "http://$bip:9999/ism/appc?configuration=OmniPatient"
       oLink.Save
 EOF
       cscript //nologo CreateShortcuts.vbs
