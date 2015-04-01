@@ -4,9 +4,16 @@
 [ ! "$OS" == "Windows_NT" ] && OS=$(uname)
 echo
 echo "Running on $OS"
-echo
 
+# Set home to a better place, just in case we are in the domain
+([ ! "$USERPROFILE" == "" ] && [ ! "$HOME" == "$USERPROFILE" ]) && export HOME=$USERPROFILE
+
+# Set the omnidock location
+if [ "$1" == "" ]; then ODOCK=$HOME/omnidock;else ODOCK=$1;fi
+ 
 # add a to update the omnidock files
+mkdir -p $ODOCK && cd $ODOCK
+
 cat > upgrade << EOF
 # some useful aliases - activate by "source ./upgrade"
 alias d-cleanall='docker images -q | xargs docker rmi 2>/dev/null'
@@ -44,11 +51,9 @@ if [ ! "$OS" == "Linux" ]; then
    ./env.sh 
    rm env.sh
 
-   # link in omnidock (for now)
+   # link in omnidock
    hdo="/home/docker/omnidock"
-   linkod="ln -Tfs $HOME/omnidock $hdo"
-   if [ ! "$1" == "" ]; then linkod="ln -Tfs $1 $hdo";fi
-   boot2docker ssh "if [ ! -d $hdo ]; then $linkod;fi"
+   boot2docker ssh "if [ ! -d $hdo ]; then ln -Tfs $ODOCK $hdo;fi"
 
    # add odin as a registry
    boot2docker ssh 'sudo sh -c "echo \"EXTRA_ARGS=\\\"--insecure-registry odin.ibi.com:5000\\\"\" > /var/lib/boot2docker/profile && sudo /etc/init.d/docker restart"'
@@ -59,17 +64,17 @@ if [ ! "$OS" == "Linux" ]; then
    # add shell links on windows
    if [ "$OS" == "Windows_NT" ]; then
       # remove old shell links
-      [ -f "$HOMEDRIVE$HOMEPATH\Desktop\ismShell.lnk" ] && rm "$HOMEDRIVE$HOMEPATH\Desktop\ismShell.lnk"
-      [ -f "$HOMEDRIVE$HOMEPATH\Desktop\Omni Integrators WorkBench.lnk" ] && rm "$HOMEDRIVE$HOMEPATH\Desktop\Omni Integrators WorkBench.lnk"
+      [ -f "$HOME\Desktop\Omni Integrators WorkBench.lnk" ] && rm "$HOME\Desktop\Omni Integrators WorkBench.lnk"
+      [ -f "$HOME\Desktop\OmniPatient Service Monitor.url" ] && rm "$HOME\Desktop\OmniPatient Service Monitor.url"
     
       # Create Shortcut to working dir
       cat >  CreateShortcuts.vbs << EOF
       Set oWS = WScript.CreateObject("WScript.Shell")
-      Set oLink = oWS.CreateShortcut("$HOMEDRIVE$HOMEPATH\Desktop\Omni Integrators WorkBench.lnk")
+      Set oLink = oWS.CreateShortcut("$HOME\Desktop\Omni Integrators WorkBench.lnk")
       oLink.TargetPath = "$SYSTEMROOT\explorer.exe"
-      oLink.Arguments="$HOMEDRIVE$HOMEPATH\omnidock\data"
+      oLink.Arguments="$ODOCK\data"
       oLink.Save
-      Set oLink = oWS.CreateShortcut("$HOMEDRIVE$HOMEPATH\Desktop\OmniPatient Service Monitor.url")
+      Set oLink = oWS.CreateShortcut("$HOME\Desktop\OmniPatient Service Monitor.url")
       oLink.TargetPath = "http://$bip:9999/ism/appc?configuration=OmniPatient"
       oLink.Save
 EOF
