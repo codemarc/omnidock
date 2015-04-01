@@ -53,7 +53,7 @@ if [ ! "$OS" == "Linux" ]; then
 
    # link in omnidock
    hdo="/home/docker/omnidock"
-   boot2docker ssh "if [ ! -d $hdo ]; then ln -Tfs $ODOCK $hdo;fi"
+   boot2docker ssh "if [ ! -d $hdo ]; then ln -Tfs $(pwd) $hdo;fi"
 
    # add odin as a registry
    boot2docker ssh 'sudo sh -c "echo \"EXTRA_ARGS=\\\"--insecure-registry odin.ibi.com:5000\\\"\" > /var/lib/boot2docker/profile && sudo /etc/init.d/docker restart"'
