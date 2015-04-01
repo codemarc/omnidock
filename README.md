@@ -34,7 +34,7 @@ You use the Boot2Docker client to control the virtualized Docker Engine thru ssh
 	Heres the current plan. we will clone a version of the omnidock scripts from git hub into 	our $HOME directory and then run the cloned setup script to complete the 	process. Issue the following commands:
 
 	* **Windows**:
-	You should use the "**Git Bash**" shell to complete this step (installed with boot2docker ). Press the windows key (or ctrl-escape) and type the word ***git*** in the search box. Finally run "**Git Bash**" to continue.
+	Use the "**Git Bash**" shell to complete this step ( it was installed with boot2docker ). Press the windows key (or ctrl-escape) and type the word ***git*** in the search box. Finally run "**Git Bash**" to continue.
 	
 	* **Mac OSX**:
 	bash shell is native on mac, so open up a terminal and go home (cd ~)  
@@ -42,6 +42,7 @@ You use the Boot2Docker client to control the virtualized Docker Engine thru ssh
     
 1. From the bash prompt issue the following commands:  
 
+		cd $USERPROFILE  
 		git config --global core.autocrlf input  
 		git clone https://github.com/codemarc/omnidock    
 		cd omnidock  
