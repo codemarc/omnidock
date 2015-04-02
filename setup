@@ -82,7 +82,7 @@ if [ ! "$OS" == "Linux" ]; then
       Set oLink = oWS.CreateShortcut("$HOME\Desktop\OmniDock.lnk")
       oLink.TargetPath = "$USERPROFILE\omnidock\env.sh"
       oLink.Arguments="-login -i"
-      oLink.WorkingDirectory=$USERPROFILE\omnidock"
+      oLink.WorkingDirectory="$USERPROFILE\omnidock"
       oLink.Save
       
       Set oLink = oWS.CreateShortcut("$HOME\Desktop\OmniPatient Service Monitor.url")
