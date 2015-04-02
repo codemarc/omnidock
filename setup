@@ -22,7 +22,6 @@ alias d-down='docker ps -q | xargs docker stop'
 # create some missing directories
 mkdir -p data data/input/in1 data/debug data/error
 
-
 # update files from github
 echo 'update from git'
 git config --global core.autocrlf input
@@ -58,12 +57,12 @@ if [ ! "$OS" == "Linux" ]; then
    boot2docker ssh "[ -f boot2docker,\ please\ format-me ] && rm boot2docker,\ please\ format-me" 2>/dev/null
 
    # setup docker from host environment   
-   boot2docker shellinit > setenv 
-   chmod +x setenv
+   boot2docker shellinit > ./setenv 
+   chmod +x ./setenv
    ./setenv
-   echo 'export HOME=$USERPROFILE' >> setenv
-   echo 'export PS1="\u@\h:\w\$ "' >> setenv
-   echo 'bash' >> setenv
+   echo 'export HOME=$USERPROFILE' >> ./setenv
+   echo 'export PS1="\u@\h:\w\$ "' >> ./setenv
+   echo 'bash' >> ./setenv
    
 
    # link in omnidock
