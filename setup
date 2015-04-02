@@ -92,7 +92,7 @@ if [ ! "$OS" == "Linux" ]; then
       oLink.Save
       
       Set oLink = oWS.CreateShortcut("$HOME\Desktop\OmniPatient Service Monitor.url")
-      #oLink.TargetPath = "http://$bip:9999/ism/appc?configuration=OmniPatient"
+      ;oLink.TargetPath = "http://$bip:9999/ism/appc?configuration=OmniPatient"
       oLink.TargetPath = "http://127.0.0.1:9999/ism/appc?configuration=OmniPatient"
       
       oLink.Save
