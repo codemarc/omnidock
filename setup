@@ -22,7 +22,6 @@ alias d-down='docker ps -q | xargs docker stop'
 # create some missing directories
 mkdir -p data data/input/in1 data/debug data/error
 
-rm ./env.sh
 
 # update files from github
 echo 'update from git'
