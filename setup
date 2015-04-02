@@ -46,8 +46,9 @@ if [ ! "$OS" == "Linux" ]; then
    boot2docker ssh "[ -f boot2docker,\ please\ format-me ] && rm boot2docker,\ please\ format-me" 2>/dev/null
 
    # setup docker from host environment   
-   boot2docker shellinit > env 
-   source ./env 
+   boot2docker shellinit > env.sh 
+   chmod +x env.sh 
+   ./env.sh 
 
    # link in omnidock
    hdo="/home/docker/omnidock"
