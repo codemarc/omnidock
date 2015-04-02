@@ -39,6 +39,12 @@ if [ ! "$OS" == "Linux" ]; then
    boot2docker version 2>/dev/null
    
    boot2docker init
+   
+   # Note: The following steps are meant as a temporary 
+   # solution and won't be needed anymore in the future.
+   VBoxManage modifyvm "boot2docker-vm" --natpf1 "tcp-port9999,tcp,,9999,,9999"
+   VBoxManage modifyvm "boot2docker-vm" --natpf1 "tcp-port5432,tcp,,5432,,5432"
+   
    boot2docker start
    
    # clean up some stuff
@@ -86,7 +92,9 @@ if [ ! "$OS" == "Linux" ]; then
       oLink.Save
       
       Set oLink = oWS.CreateShortcut("$HOME\Desktop\OmniPatient Service Monitor.url")
-      oLink.TargetPath = "http://$bip:9999/ism/appc?configuration=OmniPatient"
+      #oLink.TargetPath = "http://$bip:9999/ism/appc?configuration=OmniPatient"
+      oLink.TargetPath = "http://127.0.0.1:9999/ism/appc?configuration=OmniPatient"
+      
       oLink.Save
 EOF
       cscript //nologo CreateShortcuts.vbs
