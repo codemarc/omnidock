@@ -49,7 +49,9 @@ if [ ! "$OS" == "Linux" ]; then
    boot2docker shellinit > ./env.sh 
    chmod +x ./env.sh 
    ./env.sh
-   echo 'export PS1="\h\w\$ ";bash;' >> env.sh
+   echo 'export HOME=$USERPROFILE' >> env.sh
+   echo 'export PS1="\u@\h:\w\$ "' >> env.sh
+   echo 'bash' >> env.sh
    
 
    # link in omnidock
@@ -67,6 +69,7 @@ if [ ! "$OS" == "Linux" ]; then
       # remove old shell links
       [ -f "$HOME\Desktop\Omni Integrators WorkBench.lnk" ] && rm "$HOME\Desktop\Omni Integrators WorkBench.lnk"
       [ -f "$HOME\Desktop\OmniPatient Service Monitor.url" ] && rm "$HOME\Desktop\OmniPatient Service Monitor.url"
+      [ -f "$HOME\Desktop\OmniDock.lnk" ] && rm "$HOME\Desktop\OmniDock.lnk"
     
       # Create Shortcut to working dir
       cat >  CreateShortcuts.vbs << EOF
@@ -75,6 +78,13 @@ if [ ! "$OS" == "Linux" ]; then
       oLink.TargetPath = "$SYSTEMROOT\explorer.exe"
       oLink.Arguments="$USERPROFILE\omnidock\data"
       oLink.Save
+      
+      Set oLink = oWS.CreateShortcut("$HOME\Desktop\OmniDock.lnk")
+      oLink.TargetPath = "$USERPROFILE\omnidock\env.sh"
+      oLink.Arguments="-login -i"
+      oLink.WorkingDirectory=$USERPROFILE\omnidock"
+      oLink.Save
+      
       Set oLink = oWS.CreateShortcut("$HOME\Desktop\OmniPatient Service Monitor.url")
       oLink.TargetPath = "http://$bip:9999/ism/appc?configuration=OmniPatient"
       oLink.Save
