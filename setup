@@ -30,9 +30,8 @@ git pull
 echo
 EOF
 
-# make the script runnable and run it
+# make the script runnable
 chmod +x upgrade
-./upgrade
 
 
 # start boot2docker
@@ -47,10 +46,8 @@ if [ ! "$OS" == "Linux" ]; then
    boot2docker ssh "[ -f boot2docker,\ please\ format-me ] && rm boot2docker,\ please\ format-me" 2>/dev/null
 
    # setup docker from host environment   
-   boot2docker shellinit > env.sh 
-   chmod +x env.sh 
-   ./env.sh 
-   rm env.sh
+   boot2docker shellinit > env 
+   source ./env 
 
    # link in omnidock
    hdo="/home/docker/omnidock"
