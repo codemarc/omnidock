@@ -49,7 +49,7 @@ if [ ! "$OS" == "Linux" ]; then
    boot2docker shellinit > ./env.sh 
    chmod +x ./env.sh 
    ./env.sh
-   echo 'echo;echo;echo "[press andy key to exit]";read' >> env.sh
+   echo 'export PS1="\h\w\$ ";bash;' >> env.sh
    
 
    # link in omnidock
