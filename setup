@@ -1,6 +1,6 @@
-#
+#-------------------------------------------------------------
 # Setup omni integrators workbench environment
-#
+#-------------------------------------------------------------
 [ ! "$OS" == "Windows_NT" ] && OS=$(uname)
 echo
 echo "Running on $OS"
@@ -8,19 +8,17 @@ echo "Running on $OS"
 # Set home to a better place, just in case we are in the domain
 ([ ! "$USERPROFILE" == "" ] && [ ! "$HOME" == "$USERPROFILE" ]) && export HOME=$USERPROFILE
 
-# Set the omnidock location
-if [ "$1" == "" ]; then ODOCK=$HOME/omnidock;else ODOCK=$1;fi
- 
-# add to update the omnidock files
-mkdir -p $ODOCK && cd $ODOCK
 
+#-------------------------------------------------------------
+# build the upgrade script
+#-------------------------------------------------------------
 cat > upgrade << EOF
 # some useful aliases - activate by "source ./upgrade"
 alias d-cleanall='docker images -q | xargs docker rmi 2>/dev/null'
 alias d-down='docker ps -q | xargs docker stop'
 
-# create some missing directories
-mkdir -p data data/input/in1 data/debug data/error
+# create directories if missing
+mkdir -p data/omni/input/in1 data/omni/debug data/omni/error
 
 # update files from github
 echo 'update from git'
@@ -33,7 +31,9 @@ EOF
 chmod +x upgrade
 
 
+#-------------------------------------------------------------
 # start boot2docker
+#-------------------------------------------------------------
 if [ ! "$OS" == "Linux" ]; then
    boot2docker version 2>/dev/null
    
@@ -42,8 +42,8 @@ if [ ! "$OS" == "Linux" ]; then
    # Note: The following steps are meant as a temporary 
    # solution and won't be needed anymore in the future.
    if [ "$OS" == "Windows_NT" ]; then
-   
       if [ "$(boot2docker status)" == "poweroff" ]; then
+         if [ "$1" == "ports" ]; then
          "$PROGRAMW6432\\Oracle\\VirtualBox\\VBoxManage" modifyvm "boot2docker-vm" --natpf1 "tcp-port9999,tcp,,9999,,9999"
          "$PROGRAMW6432\\Oracle\\VirtualBox\\VBoxManage" modifyvm "boot2docker-vm" --natpf1 "tcp-port5432,tcp,,5432,,5432"
       fi
