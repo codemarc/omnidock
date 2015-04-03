@@ -44,8 +44,9 @@ if [ ! "$OS" == "Linux" ]; then
    if [ "$OS" == "Windows_NT" ]; then
       if [ "$(boot2docker status)" == "poweroff" ]; then
          if [ "$1" == "ports" ]; then
-         "$PROGRAMW6432\\Oracle\\VirtualBox\\VBoxManage" modifyvm "boot2docker-vm" --natpf1 "tcp-port9999,tcp,,9999,,9999"
-         "$PROGRAMW6432\\Oracle\\VirtualBox\\VBoxManage" modifyvm "boot2docker-vm" --natpf1 "tcp-port5432,tcp,,5432,,5432"
+            "$PROGRAMW6432\\Oracle\\VirtualBox\\VBoxManage" modifyvm "boot2docker-vm" --natpf1 "tcp-port9999,tcp,,9999,,9999"
+            "$PROGRAMW6432\\Oracle\\VirtualBox\\VBoxManage" modifyvm "boot2docker-vm" --natpf1 "tcp-port5432,tcp,,5432,,5432"
+         fi   
       fi
    fi
    
