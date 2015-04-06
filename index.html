@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Omni Integrators Workbench</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+  <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+</head>
+<body>
+
+<div class="container">
+  <h2>Workbench</h2>
+  <button id="opism" type="button" class="btn btn-primary">OmniPatient Service Monitor</button>
+  <button id="dqmas" type="button" class="btn btn-success">DQS Mastering</button>
+  <button id="dqmat" type="button" class="btn btn-success">DQS Matching</button>
+  <button id="dqmrg" type="button" class="btn btn-success">DQS Merging</button>
+</div>
+
+  <script>
+  	$('#opism').click(function(){window.open('http://127.0.0.1:9999/ism/appc?configuration=OmniPatient');});
+  	$('#dqmas').click(function(){window.open('http://127.0.0.1:9502');});
+  	$('#dqmat').click(function(){window.open('http://127.0.0.1:9504');});
+  	$('#dqmrg').click(function(){window.open('http://127.0.0.1:9506');});
+  </script>
+
+</body>
+</html>
