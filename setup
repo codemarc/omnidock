@@ -108,6 +108,10 @@ EOF
    fi
    
    boot2docker ssh
+
+else
+   # Linux only
+   boot2docker ssh 'sudo sh -c "echo \"EXTRA_ARGS=\\\"--insecure-registry odin.ibi.com:5000\\\"\" > /var/lib/boot2docker/profile && sudo /etc/init.d/docker restart"'   
 fi
 echo
 
