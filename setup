@@ -42,10 +42,14 @@ if [ ! "$OS" == "Linux" ]; then
    # Note: The following steps are meant as a temporary 
    # solution and won't be needed anymore in the future.
    if [ "$OS" == "Windows_NT" ]; then
-   
-      if [ "$(boot2docker status)" == "poweroff" ]; then
-         "$PROGRAMW6432\\Oracle\\VirtualBox\\VBoxManage" modifyvm "boot2docker-vm" --natpf1 "tcp-port9999,tcp,,9999,,9999"
-         "$PROGRAMW6432\\Oracle\\VirtualBox\\VBoxManage" modifyvm "boot2docker-vm" --natpf1 "tcp-port5432,tcp,,5432,,5432"
+      vbm="$PROGRAMW6432\\Oracle\\VirtualBox\\VBoxManage"
+      
+      if [ "$(boot2docker status)" == "running" ]; then
+         $vbm controlvm "boot2docker-vm" --natpf1 "tcp-port9999,tcp,127.0.0.1,9999,,9999"
+         $vbm controlvm "boot2docker-vm" --natpf1 "tcp-port5432,tcp,127.0.0.1,5432,,5432"
+      else
+         $vbm modifyvm "boot2docker-vm" --natpf1 "tcp-port9999,tcp,,9999,,9999"
+         $vbm modifyvm "boot2docker-vm" --natpf1 "tcp-port5432,tcp,,5432,,5432"
       fi
    fi
    
@@ -61,7 +65,7 @@ if [ ! "$OS" == "Linux" ]; then
    chmod +x ./setenv
    ./setenv
    echo 'export HOME=$USERPROFILE' >> ./setenv
-   echo 'export PS1="\u@\h:\w\$ "' >> ./setenv
+   echo 'export PS1="\u@\h:\w\n\$ "' >> ./setenv
    echo 'bash' >> ./setenv
    
 
