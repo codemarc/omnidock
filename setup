@@ -20,7 +20,7 @@ alias d-cleanall='docker images -q | xargs docker rmi 2>/dev/null'
 alias d-down='docker ps -q | xargs docker stop'
 
 # create some missing directories
-mkdir -p data data/input/in1 data/debug data/error
+mkdir -p data data/omni/input/in1 data/omni/debug data/omni/error
 
 # update files from github
 echo 'update from git'
