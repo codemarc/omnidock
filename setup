@@ -48,8 +48,8 @@ if [ ! "$OS" == "Linux" ]; then
          "$vbm" controlvm "boot2docker-vm" natpf1 "ism-port9999,tcp,127.0.0.1,9999,,9999" 2>/dev/null
          "$vbm" controlvm "boot2docker-vm" natpf1 "postgres-port5432,tcp,127.0.0.1,5432,,5432" 2>/dev/null
       else
-         "$vbm" modifyvm "boot2docker-vm" --natpf1 "ism-port9999,tcp,127.0.0.1,9999,,9999"
-         "$vbm" modifyvm "boot2docker-vm" --natpf1 "postgres-port5432,tcp,127.0.0.1,5432,,5432"
+         "$vbm" modifyvm "boot2docker-vm" --natpf1 "ism-port9999,tcp,127.0.0.1,9999,,9999" 2>/dev/null
+         "$vbm" modifyvm "boot2docker-vm" --natpf1 "postgres-port5432,tcp,127.0.0.1,5432,,5432" 2>/dev/null
       fi
    fi
    
