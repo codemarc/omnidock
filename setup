@@ -138,6 +138,10 @@ else
          
          echo "Starting docker deamon"
          sudo /etc/init.d/docker start
+      else
+         echo "Found, running sed on /var/lib/boot2docker/profile"
+         # sed -i 's/EXTRA_ARGS=.*/EXTRA_ARGS="--insecure-registry odin.ibi.com:5000 "/' /var/lib/boot2docker/profile"
+         
       fi
    else
    	  echo "Not found, probably NOT a boot2docker image"
