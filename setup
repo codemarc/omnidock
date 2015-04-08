@@ -120,13 +120,27 @@ EOF
 
 else
    # Linux only
+   uname -snrp
+   lsb_release -irc 2>/dev/null
+   echo
    
+   echo "Checking for /var/lib/boot2docker"
    if [ -e /var/lib/boot2docker ]; then
+      echo "Found, now checking for /var/lib/boot2docker/profile"
       if [ ! -f /var/lib/boot2docker/profile ]; then
-         sudo sh -c "echo \"EXTRA_ARGS=\\\"--insecure-registry odin.ibi.com:5000\\\"\" > /var/lib/boot2docker/profile"
+         echo "Not found, /var/lib/boot2docker/profile"
+         
+         echo "Stopping docker deamon"
          sudo /etc/init.d/docker stop
+         
+         echo "Creating /var/lib/boot2docker/profile"
+         sudo sh -c "echo \"EXTRA_ARGS=\\\"--insecure-registry odin.ibi.com:5000\\\"\" > /var/lib/boot2docker/profile"
+         
+         echo "Starting docker deamon"
          sudo /etc/init.d/docker start
       fi
+   else
+   	  echo "Not found, probably NOT a boot2docker image"
    fi
    
 fi
