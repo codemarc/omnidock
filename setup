@@ -46,7 +46,7 @@ if [ ! "$OS" == "Linux" ]; then
    
    # add odin as a registry if neccessary
    $(boot2docker ssh "[ -f /var/lib/boot2docker/profile ]" 2>/dev/null)
-   if [ $? -eq 0 ]; then 
+   if [ $? -gt 0 ]; then 
       boot2docker ssh 'sudo sh -c "echo \"EXTRA_ARGS=\\\"--insecure-registry odin.ibi.com:5000\\\"\" > /var/lib/boot2docker/profile"'
       boot2docker ssh 'sudo /etc/init.d/docker stop && sudo /etc/init.d/docker start'
    fi
