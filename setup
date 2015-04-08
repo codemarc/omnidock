@@ -44,9 +44,12 @@ if [ ! "$OS" == "Linux" ]; then
    bip=$(boot2docker ip)
    echo boot2docker-vm ip is $bip
    
-   # add odin as a registry
-   boot2docker ssh 'sudo sh -c "echo \"EXTRA_ARGS=\\\"--insecure-registry odin.ibi.com:5000\\\"\" > /var/lib/boot2docker/profile"'
-   boot2docker ssh 'sudo /etc/init.d/docker stop && sudo /etc/init.d/docker start'
+   # add odin as a registry if neccessary
+   $(boot2docker ssh "[ -f /var/lib/boot2docker/profile ]" 2>/dev/null)
+   if [ $? -eq 0 ]; then 
+      boot2docker ssh 'sudo sh -c "echo \"EXTRA_ARGS=\\\"--insecure-registry odin.ibi.com:5000\\\"\" > /var/lib/boot2docker/profile"'
+      boot2docker ssh 'sudo /etc/init.d/docker stop && sudo /etc/init.d/docker start'
+   fi
    
    # clean up some stuff
    boot2docker ssh "[ -f log.log ] && rm log.log" 2>/dev/null
@@ -117,10 +120,15 @@ EOF
 
 else
    # Linux only
-   sudo sh -c "echo \"EXTRA_ARGS=\\\"--insecure-registry odin.ibi.com:5000\\\"\" > /var/lib/boot2docker/profile"
-   sudo /etc/init.d/docker restart
    
-      
+   if [ -e /var/lib/boot2docker ]; then
+      if [ ! -f /var/lib/boot2docker/profile ]; then
+         sudo sh -c "echo \"EXTRA_ARGS=\\\"--insecure-registry odin.ibi.com:5000\\\"\" > /var/lib/boot2docker/profile"
+         sudo /etc/init.d/docker stop
+         sudo /etc/init.d/docker start
+      fi
+   fi
+   
 fi
 echo
 
