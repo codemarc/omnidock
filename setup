@@ -61,7 +61,7 @@ if [ ! "$OS" == "Linux" ]; then
    ./setenv
    echo 'export HOME=$USERPROFILE' >> ./setenv
    echo 'export PS1="\u@\h:\w\n\$ "' >> ./setenv
-   echo 'bash' >> ./setenv
+   echo '$SHELL' >> ./setenv
    
    # link in omnidock
    hdo="/home/docker/omnidock"
