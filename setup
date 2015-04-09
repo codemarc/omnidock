@@ -120,7 +120,7 @@ EOF
 
 else
    # Linux only
-   uname -snrp
+   uname -snrm
    lsb_release -irc 2>/dev/null
    echo
    
@@ -134,13 +134,26 @@ else
          sudo /etc/init.d/docker stop
          
          echo "Creating /var/lib/boot2docker/profile"
-         sudo sh -c "echo \"EXTRA_ARGS=\\\"--insecure-registry odin.ibi.com:5000\\\"\" > /var/lib/boot2docker/profile"
+         sudo sh -c "echo \"EXTRA_ARGS='--insecure-registry odin.ibi.com:5000' \" > /var/lib/boot2docker/profile"
          
          echo "Starting docker deamon"
          sudo /etc/init.d/docker start
+         
       else
-         echo "Found, running sed on /var/lib/boot2docker/profile"
-         # sed -i 's/EXTRA_ARGS=.*/EXTRA_ARGS="--insecure-registry odin.ibi.com:5000 "/' /var/lib/boot2docker/profile"
+         echo "Found, now checking for odin.ibi.com:5000 in /var/lib/boot2docker/profile"
+         if [ $(cat /var/lib/boot2docker/profile | grep "odin.ibi.com:5000" | wc -w) -eq 0 ]; then
+            echo "Not found, Stopping docker deamon"
+            sudo /etc/init.d/docker stop
+            
+            echo "Updating /var/lib/boot2docker/profile"
+            sed -i "s/EXTRA_ARGS='/EXTRA_ARGS='--insecure-registry odin.ibi.com:5000 /" /var/lib/boot2docker/profile
+            
+            echo "Starting docker deamon"
+            sudo /etc/init.d/docker start
+            
+         else
+            echo "good to go"
+         fi
          
       fi
    else
