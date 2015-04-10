@@ -1,0 +1,135 @@
+#---------------------------------------------------------------------
+# Setup omni integrators workbench environment
+#---------------------------------------------------------------------
+[ ! "$OS" == "Windows_NT" ] && OS=$(uname)
+echo
+echo "Running on $OS"
+
+# Set home to a better place, just in case we are in the domain
+([ ! "$USERPROFILE" == "" ] && [ ! "$HOME" == "$USERPROFILE" ]) && export HOME=$USERPROFILE
+
+# Set the omnidock location to a known place
+ODOCK=$HOME/omnidock
+
+# Add to update the omnidock files
+mkdir -p $ODOCK && cd $ODOCK
+
+
+#---------------------------------------------------------------------
+# Generate the update next upgrade script in the $ODOCK/bin directory
+cat > $ODOCK/bin/upgrade << EOF
+# update files from github
+echo 'update from git'
+git config --global core.autocrlf input
+git pull
+echo
+EOF
+
+# make the script runnable
+chmod +x $ODOCK/bin/upgrade
+
+
+#---------------------------------------------------------------------
+# handle desktop 
+if [ "$OS" == "Windows_NT" ]; then
+
+      # remove old shell links
+      [ -f "$HOME\Desktop\Omni Integrators WorkBench.lnk" ] && rm "$HOME\Desktop\Omni Integrators WorkBench.lnk"
+      [ -f "$HOME\Desktop\Omni Consoles.url" ] && rm "$HOME\Desktop\Omni Consoles.url"
+      [ -f "$HOME\Desktop\OmniDock.lnk" ] && rm "$HOME\Desktop\OmniDock.lnk"
+    
+      # Create Shortcut to working dir
+      cat >  CreateShortcuts.vbs << EOF
+      Set oWS = WScript.CreateObject("WScript.Shell")
+      Set oLink = oWS.CreateShortcut("$HOME\Desktop\Omni Integrators WorkBench.lnk")
+      oLink.TargetPath = "$SYSTEMROOT\explorer.exe"
+      oLink.Arguments="$USERPROFILE\omnidock\data"
+      oLink.Save
+      
+      Set oLink = oWS.CreateShortcut("$HOME\Desktop\OmniDock.lnk")
+      oLink.Description = "OmniDock Shell"
+      oLink.TargetPath = "sh"
+      oLink.Arguments="-login -i bin\setenv"
+      oLink.WorkingDirectory="$USERPROFILE\omnidock"
+      oLink.Save
+      
+      Set oLink = oWS.CreateShortcut("$HOME\Desktop\Omni Consoles.url")
+      oLink.TargetPath = "file:///$USERPROFILE/omnidock/index.html"
+      oLink.Save
+      
+EOF
+      cscript //nologo CreateShortcuts.vbs
+      rm CreateShortcuts.vbs
+
+
+elif [ "$OS" == "Darwin" ]; then
+   if [ ! -e ~/Desktop ]; then
+      echo "no desktop"
+   else
+      ln -s $ODOCK/data ~/Desktop/Omni\ Integrators\ WorkBench
+      ln -s $ODOCK/index.html ~/Desktop/Omni\ Consoles.html
+   fi
+
+   
+elif [ "$OS" == "Linux" ]; then
+   if [ ! -e ~/Desktop ]; then
+      echo "no desktop"
+   else
+      echo "Create Shortcuts here "~/Desktop
+   fi
+   
+else
+   echo $OS
+fi
+
+
+#---------------------------------------------------------------------
+# boot2docker 
+boot2docker version 2>/dev/null
+if [ "$?" == "0" ]; then   
+   
+   boot2docker init
+   boot2docker start
+   
+   bip=$(boot2docker ip)
+   echo boot2docker-vm ip is $bip
+   
+   # link in omnidock
+   hdo="/home/docker/omnidock"
+   boot2docker ssh "if [ ! -d $hdo ]; then ln -Tfs $(pwd) $hdo;fi"
+   
+   # run my boot2docker init script
+   boot2docker ssh "omnidock/bin/init"
+   
+   # setup docker from host environment   
+   boot2docker shellinit > bin/setenv 
+   chmod +x bin/setenv
+   bin/setenv
+   echo 'export HOME=$USERPROFILE'   >> bin/setenv
+   echo 'export PS1="\u@\h:\w\n\$ "' >> bin/setenv
+   echo '$SHELL'                     >> bin/setenv
+   
+   # virtual machine manage boot2docker ports
+   vbm="VBoxManage"
+   if [ "$OS" == "Windows_NT" ]; then
+      vbm="$PROGRAMW6432\\Oracle\\VirtualBox\\VBoxManage"
+   fi
+   
+   if [ "$(boot2docker status)" == "running" ]; then
+      "$vbm" controlvm "boot2docker-vm" natpf1 "tcp-port5432,tcp,127.0.0.1,5432,,5432" 2>/dev/null
+      "$vbm" controlvm "boot2docker-vm" natpf1 "tcp-port9999,tcp,127.0.0.1,9999,,9999" 2>/dev/null
+      "$vbm" controlvm "boot2docker-vm" natpf1 "tcp-port9000,tcp,127.0.0.1,9000,,9000" 2>/dev/null
+      "$vbm" controlvm "boot2docker-vm" natpf1 "tcp-port9001,tcp,127.0.0.1,9001,,9001" 2>/dev/null
+      "$vbm" controlvm "boot2docker-vm" natpf1 "tcp-port9001,tcp,127.0.0.1,9022,,9022" 2>/dev/null
+      "$vbm" controlvm "boot2docker-vm" natpf1 "tcp-port9502,tcp,127.0.0.1,9502,,9502" 2>/dev/null
+      "$vbm" controlvm "boot2docker-vm" natpf1 "tcp-port9504,tcp,127.0.0.1,9504,,9504" 2>/dev/null
+      "$vbm" controlvm "boot2docker-vm" natpf1 "tcp-port9506,tcp,127.0.0.1,9506,,9506" 2>/dev/null
+   fi
+
+   boot2docker ssh
+   
+else 
+   # run my boot2docker init script
+   ./bin/init
+fi
+echo

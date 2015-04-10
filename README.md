@@ -46,7 +46,7 @@ You use the Boot2Docker client to control the virtualized Docker Engine thru ssh
 		git config --global core.autocrlf input  
 		git clone https://github.com/codemarc/omnidock    
 		cd omnidock  
-		./setup  
+		bin/setup  
     
 1. If the setup script works you will now be logged into the boot2docker machine at the docker@boot2docker:~$ command prompt ( under *ascii boot2docker logo* ). From the ash prompt issue the following commands:<br/>  
   

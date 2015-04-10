@@ -1,0 +1,89 @@
+# This script runs on the docker machine (native or boot2docker)
+echo
+echo OMNIDOCK init starts ..........
+
+# identify environment
+uname -snrm
+lsb_release -irc 2>/dev/null
+echo
+
+# various settings locations
+b2dprofile="/var/lib/boot2docker/profile"
+dockerDefs="/etc/default/docker"
+
+# clean up some stuff
+[ -f log.log ] && rm -f log.log
+[ -f boot2docker,\ please\ format-me ] && rm -f boot2docker,\ please\ format-me
+
+# add insecure registry if necessary
+echo "1. Checking for /var/lib/boot2docker"
+
+if [ -e /var/lib/boot2docker ]; then
+    echo "2. Found, now checking for $b2dprofile"
+
+    if [ ! -f $b2dprofile ]; then
+	    echo
+	    echo "   $b2dprofile NOT found"
+		echo
+        echo "   2a. Stopping docker deamon"
+        sudo /etc/init.d/docker stop
+         
+        echo "   2b. Creating $b2dprofile"
+        sudo sh -c "echo \"EXTRA_ARGS='--insecure-registry odin.ibi.com:5000' \" > $b2dprofile"
+         
+        echo "   2c. Starting docker deamon"
+		echo
+        sudo /etc/init.d/docker start
+		echo
+		         
+    else
+        echo "3. Found, now checking for odin.ibi.com:5000 in $b2dprofile"
+		
+        if [ "$(cat $b2dprofile | grep 'odin.ibi.com:5000' | wc -w | tr -d '[[:space:]]')" == "0" ]; then
+           echo "Not found, Stopping docker deamon"
+           sudo /etc/init.d/docker stop
+            
+           echo "Updating $b2dprofile"
+           sudo sed -i "s/EXTRA_ARGS='/EXTRA_ARGS='--insecure-registry odin.ibi.com:5000 /" $b2dprofile
+            
+           echo "Starting docker deamon"
+           sudo /etc/init.d/docker start
+        else
+           echo
+           echo "   --insecure-registry odin.ibi.com:5000 option is set"
+        fi
+    fi
+else
+  	echo "2. Not Found, probably NOT a boot2docker runtime"
+    echo "3. Checking for $dockerDefs"
+    if [ -f $dockerDefs ]; then
+        echo "4. Found, now checking for odin.ibi.com:5000 in $dockerDefs"
+        
+        if [ $(cat $dockerDefs | grep "odin.ibi.com:5000" | wc -w) -eq 0 ]; then
+           echo "   4a. Not found, Stopping docker deamon"
+           sudo service docker stop
+
+           echo "   4b. Updating $dockerDefs"
+           if [ $(cat $dockerDefs | grep "#DOCKER_OPTS=" | wc -w) -eq 0 ]; then
+              sudo sed -i "s/DOCKER_OPTS=\"/DOCKER_OPTS=\"--insecure-registry odin.ibi.com:5000 /" $dockerDefs
+           else 
+              sudo sed -i "s/#DOCKER_OPTS=\"/DOCKER_OPTS=\"--insecure-registry odin.ibi.com:5000 /" $dockerDefs
+           fi
+
+           echo "4c. Starting docker deamon"
+           sudo service docker start
+           echo
+         
+         else
+            echo
+            echo "   --insecure-registry odin.ibi.com:5000 option is set"
+         fi
+         
+      else
+         echo "Not found, is docker even installed?"
+      fi	
+fi	
+echo
+echo OMNIDOCK init ends ..........
+echo
+
