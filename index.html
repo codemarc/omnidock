@@ -9,21 +9,13 @@
   <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
 </head>
 <body>
-
-<div class="container">
-  <h2>Workbench</h2>
-  <button id="opism" type="button" class="btn btn-primary">OmniPatient Service Monitor</button>
-  <button id="dqmas" type="button" class="btn btn-success">DQS Mastering</button>
-  <button id="dqmat" type="button" class="btn btn-success">DQS Matching</button>
-  <button id="dqmrg" type="button" class="btn btn-success">DQS Merging</button>
-</div>
-
-  <script>
-  	$('#opism').click(function(){window.open('http://127.0.0.1:9999/ism/appc?configuration=OmniPatient');});
-  	$('#dqmas').click(function(){window.open('http://127.0.0.1:9502');});
-  	$('#dqmat').click(function(){window.open('http://127.0.0.1:9504');});
-  	$('#dqmrg').click(function(){window.open('http://127.0.0.1:9506');});
-  </script>
-
+  <div class="container">
+    <h2>Workbench</h2>
+    <button name="opsm" href="9999/ism/appc?configuration=OmniPatient" type="button" class="btn btn-primary">OmniPatient Service Monitor</button>
+    <button name="dqms" href="9502" type="button" class="btn btn-success">DQS Mastering</button>
+    <button name="dqmt" href="9504" type="button" class="btn btn-success">DQS Matching</button>
+    <button name="dqmg" href="9506" type="button" class="btn btn-success">DQS Merging</button>
+  </div>
+  <script>$('.btn').click(function(){window.open('http://127.0.0.1:'+$(this).attr('href'),$(this).attr('name'));});</script>
 </body>
 </html>
