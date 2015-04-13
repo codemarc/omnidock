@@ -80,7 +80,7 @@ elif [ "$OS" == "Linux" ]; then
 #!/usr/bin/env xdg-open
 [Desktop Entry]
 Version=1.0
-Name=OmniDock        
+Name=Omni Dock
 Comment=Start a terminal in the OmniDock location
 Exec=gnome-terminal --working-directory=$ODOCK  
 Icon=utilities-terminal
@@ -100,7 +100,7 @@ Categories=Application;
 EOF
 
       chmod +x $HOME/Desktop/omnidock.desktop $HOME/Desktop/omniwb.desktop
-      [ ! -e ~/Desktop/Omni\ Consoles.html ] && ln -s $ODOCK/index.html ~/Desktop/Omni\ Consoles.html
+      [ ! -e ~/Desktop/Omni\ Consoles.html ] && ln -s $ODOCK/index.html ~/Desktop/Omni\ Consoles
    
    fi
    
