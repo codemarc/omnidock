@@ -199,6 +199,35 @@ if [ "$1" = "down" ]; then
    exit
 fi
 
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# test - used internally
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+if [ "$1" = "test" ]; then
+
+   if [ "$2" = "update" ]; then
+      docker pull cibi/wso2is:4.6.0
+      exit
+   fi
+
+   if [ "$2" = "down" ]; then
+      stopremove wso2is
+      exit
+   fi
+   
+   docker ps | grep wso2is 2>/dev/null 1>/dev/null
+   if [ ! $? -eq 0 ]; then
+      echo starting wso2is
+      docker run -d -h="wso2is" --name wso2is \
+        -P -p 9443:9443 cibi/wso2is:4.6.0 \
+        2>/dev/null 1>/dev/null
+   fi
+   echo
+   exit   
+fi
+
+
+
  
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # update
