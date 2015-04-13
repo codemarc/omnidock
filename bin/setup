@@ -75,7 +75,33 @@ elif [ "$OS" == "Linux" ]; then
    if [ ! -e ~/Desktop ]; then
       echo "no desktop"
    else
-      echo "Create Shortcuts here "~/Desktop
+
+      cat > $HOME/Desktop/omnidock.desktop <<-EOF
+#!/usr/bin/env xdg-open
+[Desktop Entry]
+Version=1.0
+Name=OmniDock        
+Comment=Start a terminal in the OmniDock location
+Exec=gnome-terminal --working-directory=$ODOCK  
+Icon=utilities-terminal
+Terminal=false 
+Type=Application
+Categories=Application;   
+EOF
+
+      cat > $HOME/Desktop/omniwb.desktop <<-EOF
+[Desktop Entry]
+Version=1.0
+Name=Omni Integrators WorkBench
+Exec=nautilus file:////home/mg01685/omnidock/data
+Terminal=false
+Type=Application
+Categories=Application;
+EOF
+
+      chmod +x $HOME/Desktop/omnidock.desktop $HOME/Desktop/omniwb.desktop
+      [ ! -e ~/Desktop/Omni\ Consoles.html ] && ln -s $ODOCK/index.html ~/Desktop/Omni\ Consoles.html
+   
    fi
    
 else
