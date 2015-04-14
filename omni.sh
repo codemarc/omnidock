@@ -207,12 +207,22 @@ if [ "$1" = "test" ]; then
 
    if [ "$2" = "update" ]; then
       docker pull cibi/wso2is:4.6.0
+      docker pull cibi/tomcat7
       exit
    fi
 
    if [ "$2" = "down" ]; then
+      stopremove tomcat7
       stopremove wso2is
       exit
+   fi
+   
+   docker ps | grep tomcat7 2>/dev/null 1>/dev/null
+   if [ ! $? -eq 0 ]; then
+      echo starting tomcat7
+      docker run -d -h="tomcat7" --name tomcat7 \
+        -P -p 8080:8080 cibi/tomcat7 \
+        2>/dev/null 1>/dev/null
    fi
    
    docker ps | grep wso2is 2>/dev/null 1>/dev/null

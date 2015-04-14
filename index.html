@@ -4,9 +4,9 @@
   <title>Omni Integrators Workbench</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-  <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+  <script src="assets/js/jquery.min.js"></script>
+  <script src="assets/js/bootstrap.min.js"></script>
 </head>
 <body class="container-fluid">
 <div class="list-group" style="margin-top:24px;">
@@ -24,9 +24,17 @@
   	</div>
   </a>
   
+    <a href="#" class="list-group-item">
+    <h3 class="list-group-item-heading">Management Console</h3>
+    <div class="btn-toolbar">
+		<button name="ismb" href="8080/OmniDomain/" type="button" class="btn btn-well btn-warning">Omni 360<br/>Domain Server</button>
+	</div>
+  </a>
+  
   <a href="#" class="list-group-item">
   	<h3 class="list-group-item-heading">Services</h3>
   	<div class="row btn-toolbar">
+  		<button name="tc7" href="8080/manager/" type="button" class="btn btn-info">Tomcat Web<br/>Application Manager</button>
   		<button name="wso2is" href="9443/carbon/" ssl="true" type="button" class="btn btn-info">WSO2 Identity Server<br/>Management Console</button>
 	</div>
   </a>
