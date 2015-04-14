@@ -150,6 +150,7 @@ if [ "$?" == "0" ]; then
       "$vbm" controlvm "boot2docker-vm" natpf1 "tcp-port9502,tcp,127.0.0.1,9502,,9502" 2>/dev/null
       "$vbm" controlvm "boot2docker-vm" natpf1 "tcp-port9504,tcp,127.0.0.1,9504,,9504" 2>/dev/null
       "$vbm" controlvm "boot2docker-vm" natpf1 "tcp-port9506,tcp,127.0.0.1,9506,,9506" 2>/dev/null
+      "$vbm" controlvm "boot2docker-vm" natpf1 "tcp-port9443,tcp,127.0.0.1,9443,,9443" 2>/dev/null
    fi
 
    boot2docker ssh
