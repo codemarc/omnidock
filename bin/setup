@@ -53,15 +53,9 @@ elif [ "$OS" == "Linux" ]; then
    if [ ! -e ~/Desktop ]; then
       echo "no desktop"
    else
-<<<<<<< HEAD
       ln -s $ODOCK/bin/desk/omniwb.desktop $HOME/Desktop/omniwb.desktop && chmod +x ~/Desktop/omniwb.desktop
       ln -s $ODOCK/index.html ~/Desktop/Omni\ Consoles
       ln -s $ODOCK/bin/desk/omnidock.desktop ~/Desktop/omnidock.desktop && chmod +x ~/Desktop/omnidock.desktop      
-=======
-      ln -s $ODOCK/bin/desk/linux/omniwb.desktop $HOME/Desktop/omniwb.desktop && chmod +x ~/Desktop/omniwb.desktop
-      ln -s $ODOCK/index.html ~/Desktop/Omni\ Consoles
-      ln -s $ODOCK/bin/desk/linux/omnidock.desktop ~/Desktop/omnidock.desktop && chmod +x ~/Desktop/omnidock.desktop      
->>>>>>> 154548d4c99bf0f50a509ee336f971e01643ea3e
    fi
    
 else

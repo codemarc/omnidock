@@ -1,4 +1,7 @@
-export PS1="\\n\\h:\\W \\u> "
 cd $HOME/omnidock
+clear
+if [ "$OS" == "Windows_NT" ]; then bin/setup;else 
+export PS1="\\n\\h:\\W \\u> "
 ./omni.sh
 $SHELL
+fi
