@@ -1,0 +1,4 @@
+export PS1="\\n\\h:\\W \\u> "
+cd $HOME/omnidock
+./omni.sh
+$SHELL

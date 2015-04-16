@@ -17,6 +17,7 @@ mkdir -p $ODOCK && cd $ODOCK
 
 #---------------------------------------------------------------------
 # Generate the update next upgrade script in the $ODOCK/bin directory
+#---------------------------------------------------------------------
 cat > $ODOCK/bin/upgrade << EOF
 # update files from github
 echo 'update from git'
@@ -30,37 +31,15 @@ chmod +x $ODOCK/bin/upgrade
 
 
 #---------------------------------------------------------------------
-# handle desktop 
+# Handle desktop 
+#---------------------------------------------------------------------
 if [ "$OS" == "Windows_NT" ]; then
-
       # remove old shell links
       [ -f "$HOME\Desktop\Omni Integrators WorkBench.lnk" ] && rm "$HOME\Desktop\Omni Integrators WorkBench.lnk"
       [ -f "$HOME\Desktop\Omni Consoles.url" ] && rm "$HOME\Desktop\Omni Consoles.url"
       [ -f "$HOME\Desktop\OmniDock.lnk" ] && rm "$HOME\Desktop\OmniDock.lnk"
-    
       # Create Shortcut to working dir
-      cat >  CreateShortcuts.vbs << EOF
-      Set oWS = WScript.CreateObject("WScript.Shell")
-      Set oLink = oWS.CreateShortcut("$HOME\Desktop\Omni Integrators WorkBench.lnk")
-      oLink.TargetPath = "$SYSTEMROOT\explorer.exe"
-      oLink.Arguments="$USERPROFILE\omnidock\data"
-      oLink.Save
-      
-      Set oLink = oWS.CreateShortcut("$HOME\Desktop\OmniDock.lnk")
-      oLink.Description = "OmniDock Shell"
-      oLink.TargetPath = "sh"
-      oLink.Arguments="-login -i bin\setenv"
-      oLink.WorkingDirectory="$USERPROFILE\omnidock"
-      oLink.Save
-      
-      Set oLink = oWS.CreateShortcut("$HOME\Desktop\Omni Consoles.url")
-      oLink.TargetPath = "file:///$USERPROFILE/omnidock/index.html"
-      oLink.Save
-      
-EOF
-      cscript //nologo CreateShortcuts.vbs
-      rm CreateShortcuts.vbs
-
+      cscript //nologo "$ODOCK/bin/desk/windows/CreateShortcuts.vbs"
 
 elif [ "$OS" == "Darwin" ]; then
    if [ ! -e ~/Desktop ]; then
@@ -68,40 +47,16 @@ elif [ "$OS" == "Darwin" ]; then
    else
       ln -s $ODOCK/data ~/Desktop/Omni\ Integrators\ WorkBench
       ln -s $ODOCK/index.html ~/Desktop/Omni\ Consoles.html
+      ln -s $ODOCK/bin/desktop/osx/omnidock ~/Desktop/Omni\ Shell
    fi
-
    
 elif [ "$OS" == "Linux" ]; then
    if [ ! -e ~/Desktop ]; then
       echo "no desktop"
    else
-
-      cat > $HOME/Desktop/omnidock.desktop <<-EOF
-#!/usr/bin/env xdg-open
-[Desktop Entry]
-Version=1.0
-Name=Omni Dock
-Comment=Start a terminal in the OmniDock location
-Exec=gnome-terminal --working-directory=$ODOCK  
-Icon=utilities-terminal
-Terminal=false 
-Type=Application
-Categories=Application;   
-EOF
-
-      cat > $HOME/Desktop/omniwb.desktop <<-EOF
-[Desktop Entry]
-Version=1.0
-Name=Omni Integrators WorkBench
-Exec=nautilus file:////home/mg01685/omnidock/data
-Terminal=false
-Type=Application
-Categories=Application;
-EOF
-
-      chmod +x $HOME/Desktop/omnidock.desktop $HOME/Desktop/omniwb.desktop
+      ln -s $ODOCK/bin/desktop/linux/omnidock.desktop $HOME/Desktop/omnidock.desktop
+      ln -s $ODOCK/bin/desktop/linux/omniweb.desktop $HOME/Desktop/omniweb.desktop
       [ ! -e ~/Desktop/Omni\ Consoles.html ] && ln -s $ODOCK/index.html ~/Desktop/Omni\ Consoles
-   
    fi
    
 else
@@ -111,6 +66,7 @@ fi
 
 #---------------------------------------------------------------------
 # boot2docker 
+#---------------------------------------------------------------------
 boot2docker version 2>/dev/null
 if [ "$?" == "0" ]; then   
    

@@ -1,0 +1,7 @@
+[Desktop Entry]
+Version=1.0
+Name=Omni Integrators WorkBench
+Exec=nautilus file:////home/mg01685/omnidock/data
+Terminal=false
+Type=Application
+Categories=Application;
