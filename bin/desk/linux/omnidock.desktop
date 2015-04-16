@@ -1,9 +1,8 @@
-#!/usr/bin/env xdg-open
 [Desktop Entry]
 Version=1.0
-Name=Omni Dock
+Name=Omni Shell
 Comment=Start a terminal in the OmniDock location
-Exec=gnome-terminal --working-directory=$ODOCK  
+Exec=gnome-terminal -x /bin/bash -c "$HOME/omnidock/bin/desk/omnidock"
 Icon=utilities-terminal
 Terminal=false 
 Type=Application

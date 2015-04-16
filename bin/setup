@@ -47,16 +47,16 @@ elif [ "$OS" == "Darwin" ]; then
    else
       ln -s $ODOCK/data ~/Desktop/Omni\ Integrators\ WorkBench
       ln -s $ODOCK/index.html ~/Desktop/Omni\ Consoles.html
-      ln -s $ODOCK/bin/desktop/osx/omnidock ~/Desktop/Omni\ Shell
+      ln -s $ODOCK/bin/desk/omnidock ~/Desktop/Omni\ Shell
    fi
    
 elif [ "$OS" == "Linux" ]; then
    if [ ! -e ~/Desktop ]; then
       echo "no desktop"
    else
-      ln -s $ODOCK/bin/desktop/linux/omnidock.desktop $HOME/Desktop/omnidock.desktop
-      ln -s $ODOCK/bin/desktop/linux/omniweb.desktop $HOME/Desktop/omniweb.desktop
-      [ ! -e ~/Desktop/Omni\ Consoles.html ] && ln -s $ODOCK/index.html ~/Desktop/Omni\ Consoles
+      ln -s $ODOCK/bin/desk/linux/omniwb.desktop $HOME/Desktop/omniwb.desktop && chmod +x ~/Desktop/omniwb.desktop
+      ln -s $ODOCK/index.html ~/Desktop/Omni\ Consoles
+      ln -s $ODOCK/bin/desk/linux/omnidock.desktop ~/Desktop/omnidock.desktop && chmod +x ~/Desktop/omnidock.desktop      
    fi
    
 else
