@@ -35,11 +35,10 @@ chmod +x $ODOCK/bin/upgrade
 #---------------------------------------------------------------------
 if [ "$OS" == "Windows_NT" ]; then
       # remove old shell links
-      [ -f "$HOME\Desktop\Omni Integrators WorkBench.lnk" ] && rm "$HOME\Desktop\Omni Integrators WorkBench.lnk"
+	  [ -f "$HOME\Desktop\Omni Integrators WorkBench.lnk" ] && rm "$HOME\Desktop\Omni Integrators WorkBench.lnk"
       [ -f "$HOME\Desktop\Omni Consoles.url" ] && rm "$HOME\Desktop\Omni Consoles.url"
-      [ -f "$HOME\Desktop\OmniDock.lnk" ] && rm "$HOME\Desktop\OmniDock.lnk"
-      # Create Shortcut to working dir
-      cscript //nologo "$ODOCK/bin/desk/windows/CreateShortcuts.vbs"
+      [ -f "$HOME\Desktop\Omni Shell.lnk" ] && rm "$HOME\Desktop\Omni Shell.lnk"
+      cscript //nologo "$ODOCK/bin/desk/omnidock.vbs"
 
 elif [ "$OS" == "Darwin" ]; then
    if [ ! -e ~/Desktop ]; then
@@ -54,9 +53,15 @@ elif [ "$OS" == "Linux" ]; then
    if [ ! -e ~/Desktop ]; then
       echo "no desktop"
    else
+<<<<<<< HEAD
+      ln -s $ODOCK/bin/desk/omniwb.desktop $HOME/Desktop/omniwb.desktop && chmod +x ~/Desktop/omniwb.desktop
+      ln -s $ODOCK/index.html ~/Desktop/Omni\ Consoles
+      ln -s $ODOCK/bin/desk/omnidock.desktop ~/Desktop/omnidock.desktop && chmod +x ~/Desktop/omnidock.desktop      
+=======
       ln -s $ODOCK/bin/desk/linux/omniwb.desktop $HOME/Desktop/omniwb.desktop && chmod +x ~/Desktop/omniwb.desktop
       ln -s $ODOCK/index.html ~/Desktop/Omni\ Consoles
       ln -s $ODOCK/bin/desk/linux/omnidock.desktop ~/Desktop/omnidock.desktop && chmod +x ~/Desktop/omnidock.desktop      
+>>>>>>> 154548d4c99bf0f50a509ee336f971e01643ea3e
    fi
    
 else
@@ -85,12 +90,8 @@ if [ "$?" == "0" ]; then
    
    # setup docker from host environment   
    boot2docker shellinit > bin/setenv 
-   chmod +x bin/setenv
-   bin/setenv
-   echo 'export HOME=$USERPROFILE'   >> bin/setenv
-   echo 'export PS1="\u@\h:\w\n\$ "' >> bin/setenv
-   echo '$SHELL'                     >> bin/setenv
-   
+   source bin/setenv
+      
    # virtual machine manage boot2docker ports
    vbm="VBoxManage"
    if [ "$OS" == "Windows_NT" ]; then
