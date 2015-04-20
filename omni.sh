@@ -9,7 +9,8 @@ vibi=0.5
 
 # private registry
 repo=odin.ibi.com:5000
-ompc=$repo/cibi/omni
+omni=cibi/omni
+opmc=cibi/opmc
 
 # get my host name and ip address
 hostnm=$(hostname)
@@ -174,7 +175,7 @@ if [ "$1" = "up" ]; then
             -p 6199:6199 -p 9502:9502 -p 9504:9504 -p 9506:9506 \
          -v $(pwd)/data/prop/DIB.properties:/ibi/iway7/config/OmniPatient/resource/DIB.properties \
          -v $(pwd)/data/omni:/omni \
-         $ompc 2>&1 >/dev/null
+         $omni 2>&1 >/dev/null
          
       docker logs ism
       
@@ -207,22 +208,16 @@ if [ "$1" = "test" ]; then
 
    if [ "$2" = "update" ]; then
       docker pull cibi/wso2is:4.6.0
-      docker pull cibi/tomcat7
+      docker pull $opmc
       exit
    fi
 
    if [ "$2" = "down" ]; then
-      stopremove tomcat7
-      stopremove wso2is
+   	  stopremove opmc
+   	  stopremove wso2is
+   	  echo
+   	  docker ps -a
       exit
-   fi
-   
-   docker ps | grep tomcat7 2>/dev/null 1>/dev/null
-   if [ ! $? -eq 0 ]; then
-      echo starting tomcat7
-      docker run -d -h="tomcat7" --name tomcat7 \
-        -P -p 8080:8080 cibi/tomcat7 \
-        2>/dev/null 1>/dev/null
    fi
    
    docker ps | grep wso2is 2>/dev/null 1>/dev/null
@@ -232,6 +227,19 @@ if [ "$1" = "test" ]; then
         -P -p 9443:9443 cibi/wso2is:4.6.0 \
         2>/dev/null 1>/dev/null
    fi
+   
+   docker ps | grep $opmc 2>/dev/null 1>/dev/null
+   if [ ! $? -eq 0 ]; then
+      echo starting $opmc
+      docker run -d -h="opmc" --name opmc \
+        --link wso2is:wso2is \
+        -P -p 8080:8080 \
+        -v $(pwd)/data/opmc/logs:/ibi/tomcat7/logs \
+        $opmc 2>&1 >/dev/null
+   fi
+   
+   echo
+   docker ps -a
    echo
    exit   
 fi
@@ -245,7 +253,7 @@ fi
 if [ "$1" = "update" ]; then
    echo
    docker pull postgres:9.4
-   docker pull $repo/cibi/omni
+   docker pull $omni
    removeoldimages
    echo
    docker images
