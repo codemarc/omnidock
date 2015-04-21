@@ -236,6 +236,8 @@ if [ "$1" = "test" ]; then
         --link wso2is:wso2is \
         -P -p 8080:8080 \
         -v $(pwd)/data/opmc/logs:/ibi/tomcat7/logs \
+        -v $(pwd)/data/opmc/domains:/ibi/opmc/domains \
+        -v $(pwd)/data/opmc/properties:/ibi/opmc/properties \
         $opmc 2>&1 >/dev/null
    fi
    
