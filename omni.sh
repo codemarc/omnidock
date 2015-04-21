@@ -9,8 +9,8 @@ vibi=0.5
 
 # private registry
 repo=odin.ibi.com:5000
-omni=cibi/omni
-opmc=cibi/opmc
+omni=$repo/cibi/omni
+opmc=$repo/cibi/opmc
 
 # get my host name and ip address
 hostnm=$(hostname)
@@ -169,6 +169,7 @@ if [ "$1" = "up" ]; then
    
    check ism
    if [ $rc -gt 0 ]; then
+      echo starting $omni
       docker run -d -h="ism" --name ism --dns=$hostip --env sentinel=$hostip \
          --link postgres:postgres \
          -P -p 9999:9999 -p 9000:9000 -p 9001:9001 -p 9022:22   \
