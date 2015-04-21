@@ -208,7 +208,7 @@ fi
 if [ "$1" = "test" ]; then
 
    if [ "$2" = "update" ]; then
-      docker pull cibi/wso2is:4.6.0
+      docker pull cibi/wso2is
       docker pull $opmc
       exit
    fi
@@ -225,7 +225,7 @@ if [ "$1" = "test" ]; then
    if [ ! $? -eq 0 ]; then
       echo starting wso2is
       docker run -d -h="wso2is" --name wso2is \
-        -P -p 9443:9443 cibi/wso2is:4.6.0 \
+        -P -p 9443:9443 cibi/wso2is \
         2>/dev/null 1>/dev/null
    fi
    
