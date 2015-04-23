@@ -235,7 +235,8 @@ if [ "$1" = "test" ]; then
       docker run -d -h="opmc" --name opmc \
         --link wso2is:wso2is \
         -P -p 8080:8080 \
-        -v $(pwd)/data/opmc/logs:/ibi/tomcat7/logs \
+        -v $(pwd)/data/opmc/logs/tomcat7:/ibi/tomcat7/logs \
+        -v $(pwd)/data/opmc/logs/remediation:/ibi/tomcat7/webapps/RemediationService/WEB-INF/config/base/log \
         -v $(pwd)/data/opmc/domains:/ibi/opmc/domains \
         -v $(pwd)/data/opmc/properties:/ibi/opmc/properties \
         $opmc 2>&1 >/dev/null

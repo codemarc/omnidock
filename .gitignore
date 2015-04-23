@@ -1,6 +1,6 @@
 /.project
 /bin/upgrade
 /bin/setenv
-/data/opmc/logs/*.log
-/data/opmc/logs/*.out
+/data/opmc/logs/**/*.log
+/data/opmc/logs/**/*.out
 /data/opmc/logs/localhost_access_log*.*
