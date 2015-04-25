@@ -9,8 +9,9 @@ vibi=0.5
 
 # private registry
 repo=odin.ibi.com:5000
-omni=$repo/cibi/omni
-opmc=$repo/cibi/opmc
+wso2is=$repo/cibi/wso2is
+domain=$repo/cibi/domain
+workbench=$repo/cibi/omni:workbench
 
 # get my host name and ip address
 hostnm=$(hostname)
@@ -257,7 +258,9 @@ fi
 if [ "$1" = "update" ]; then
    echo
    docker pull postgres:9.4
-   docker pull $omni
+   docker pull $wso2is
+   docker pull $domain
+   docker pull $workbench
    removeoldimages
    echo
    docker images
