@@ -5,12 +5,12 @@
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # set my name and version
-vibi=0.5
+vibi=0.6
 
 # private registry
 repo=odin.ibi.com:5000
-wso2is=$repo/cibi/wso2is
-domain=$repo/cibi/domain
+wso2is=$repo/cibi/omni:wso2is
+domain=$repo/cibi/omni:domain
 workbench=$repo/cibi/omni:workbench
 
 # get my host name and ip address
@@ -18,10 +18,13 @@ hostnm=$(hostname)
 
 
 # define helper functions
+showstatus() { 
+   echo;docker ps -a;echo;$0 ip
+}
 
 getmyip() {
    hostip=$(/sbin/ifconfig $1 |  grep "inet addr" |  cut -d':' -s -f2 | cut -d' ' -f1)
-}  
+}
 
 removeoldimages() {
    docker images | grep '<none>'| awk '{print $3}' | xargs docker rmi 2>/dev/null
@@ -42,7 +45,13 @@ stopremove() {
       echo;echo "docker stop $1";docker stop $1;echo " stopped";echo
       echo;echo "docker rm $1";docker rm $1;echo " removed";echo
    fi
-}  
+}
+
+stopremoveall() {
+   stopremove ism;stopremove omnidomain;stopremove wso2is;stopremove postgres
+   echo removing omnidata
+   docker rm omnidata 2>/dev/null 1>/dev/null
+}
 
 
 # figure out a good host ip
@@ -127,13 +136,9 @@ fi
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 if [ "$1" = "init" ]; then
 
-   if [ "$2" = "all" ]; then
-      stopremove ism
-      stopremove postgres
-      echo removing omnidata
-      docker rm omnidata 2>/dev/null 1>/dev/null
-   fi
+   if [ "$2" = "all" ]; then stopremoveall;fi;
    
+   # omnidata
    docker ps -a | grep omnidata 2>/dev/null 1>/dev/null
    if [ ! $? -eq 0 ]; then
       echo creating omnidata
@@ -141,9 +146,10 @@ if [ "$1" = "init" ]; then
         -v /var/lib/postgresql/data postgres:9.4 2>&1 >/dev/null
       echo loading initial metadata into omnidata
       docker run --rm --volumes-from omnidata -v $(pwd)/data:/data postgres:9.4 \
-        tar -xzf /data/omnidb.tgz 
+        tar -xzf /data/load/omnidb.tgz 
    fi
-   
+
+   # postgres
    docker ps | grep postgres 2>/dev/null 1>/dev/null
    if [ ! $? -eq 0 ]; then
       echo starting postgres
@@ -151,6 +157,29 @@ if [ "$1" = "init" ]; then
         -v /var/lib/postgresql/data -P -p 5432:5432 postgres:9.4 \
         2>/dev/null 1>/dev/null
    fi
+
+   # wso2is
+   docker ps | grep wso2is 2>/dev/null 1>/dev/null
+   if [ ! $? -eq 0 ]; then
+      echo starting wso2is 
+      docker run -d -h="wso2is" --name wso2is \
+         -P -p 9443:9443 \
+         $wso2is 2>/dev/null 1>/dev/null
+   fi
+
+   # domain
+   docker ps | grep omnidomain 2>/dev/null 1>/dev/null
+      if [ ! $? -eq 0 ]; then
+         echo starting OmniDomain
+         docker run -d -h="omnidomain" --name omnidomain \
+         --link postgres:postgres \
+         -P -p 8080:8080 \
+         $domain  2>/dev/null 1>/dev/null
+         echo
+         docker ps -a
+         exit
+      fi
+
    echo
    exit   
 fi
@@ -166,6 +195,10 @@ if [ "$1" = "up" ]; then
    else 
       check postgres
       [ $rc -gt 0 ] && $0 init 
+      check wso2is
+      [ $rc -gt 0 ] && $0 init 
+      check omnidomain
+      [ $rc -gt 0 ] && $0 init 
    fi
    
    check ism
@@ -177,13 +210,12 @@ if [ "$1" = "up" ]; then
             -p 6199:6199 -p 9502:9502 -p 9504:9504 -p 9506:9506 \
          -v $(pwd)/data/prop/DIB.properties:/ibi/iway7/config/OmniPatient/resource/DIB.properties \
          -v $(pwd)/data/omni:/omni \
-         $omni 2>&1 >/dev/null
+         $workbench 2>&1 >/dev/null
          
       docker logs ism
       
    fi
-   
-   $0 ip
+   showstatus
    exit
 fi
 
@@ -192,13 +224,19 @@ fi
 # down
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 if [ "$1" = "down" ]; then
-   stopremove ism
-   if [ "$2" = "all" ]; then
-      stopremove postgres
+   if [ $# = 1 ]; then
+      echo 
+      echo "Usage : $0 down [all|ism|omnidomain|wso2is|postgres|omnidata]"
+      echo
+      exit
+   elif [ "$2" = "all" ]; then stopremoveall;
+   elif [ "$2" = "omnidata" ]; then
+      echo removing omnidata
       docker rm omnidata 2>/dev/null 1>/dev/null
+   else
+      stopremove $2
    fi
-   
-   $0 ip
+   showstatus
    exit
 fi
 
@@ -208,28 +246,12 @@ fi
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 if [ "$1" = "test" ]; then
 
-   if [ "$2" = "update" ]; then
-      docker pull cibi/wso2is
-      docker pull $opmc
+   if [ "$2" = "down" ]; then
+      stopremove opmc
+      showstatus
       exit
    fi
 
-   if [ "$2" = "down" ]; then
-   	  stopremove opmc
-   	  stopremove wso2is
-   	  echo
-   	  docker ps -a
-      exit
-   fi
-   
-   docker ps | grep wso2is 2>/dev/null 1>/dev/null
-   if [ ! $? -eq 0 ]; then
-      echo starting wso2is
-      docker run -d -h="wso2is" --name wso2is \
-        -P -p 9443:9443 cibi/wso2is \
-        2>/dev/null 1>/dev/null
-   fi
-   
    docker ps | grep $opmc 2>/dev/null 1>/dev/null
    if [ ! $? -eq 0 ]; then
       echo starting $opmc
@@ -243,15 +265,11 @@ if [ "$1" = "test" ]; then
         $opmc 2>&1 >/dev/null
    fi
    
-   echo
-   docker ps -a
-   echo
+   showstatus
    exit   
 fi
 
 
-
- 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # update
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
