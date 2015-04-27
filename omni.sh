@@ -157,6 +157,8 @@ if [ "$1" = "init" ]; then
         -v /var/lib/postgresql/data -P -p 5432:5432 postgres:9.4 \
         2>/dev/null 1>/dev/null
    fi
+   
+   if [ "$3" = "data" ]; then exit;fi;
 
    # wso2is
    docker ps | grep wso2is 2>/dev/null 1>/dev/null
