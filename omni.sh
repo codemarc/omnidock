@@ -11,6 +11,7 @@ vibi=0.6
 repo=odin.ibi.com:5000
 wso2is=$repo/cibi/omni:wso2is
 domain=$repo/cibi/omni:domain
+remediate=$repo/cibi/omni:remediate
 workbench=$repo/cibi/omni:workbench
 
 # get my host name and ip address
@@ -48,7 +49,7 @@ stopremove() {
 }
 
 stopremoveall() {
-   stopremove ism;stopremove omnidomain;stopremove wso2is;stopremove postgres
+   stopremove ism;stopremove remediate;stopremove omnidomain;stopremove wso2is;stopremove postgres
    echo removing omnidata
    docker rm omnidata 2>/dev/null 1>/dev/null
 }
@@ -100,6 +101,7 @@ if [ "$1" = "ip" ]; then
    else
       docker inspect --format='{{.NetworkSettings.IPAddress}}' $2
    fi
+   exit
 fi   
 
 
@@ -172,16 +174,25 @@ if [ "$1" = "init" ]; then
    # domain
    docker ps | grep omnidomain 2>/dev/null 1>/dev/null
       if [ ! $? -eq 0 ]; then
-         echo starting OmniDomain
+         echo starting omnidomain
          docker run -d -h="omnidomain" --name omnidomain \
          --link postgres:postgres \
          -P -p 8080:8080 \
-         $domain  2>/dev/null 1>/dev/null
-         echo
-         docker ps -a
-         exit
+         $domain 2>/dev/null 1>/dev/null
+      fi
+      
+   # remediate
+   docker ps | grep remediate 2>/dev/null 1>/dev/null
+      if [ ! $? -eq 0 ]; then
+         echo starting remediate
+         docker run -d -t -h="remediate" --name remediate \
+         --link postgres:postgres --link wso2is:wso2is \
+         -P -p 9065:9999 -p 9066:9280 -p 9100:9100 -p 23:23 \
+         $remediate 2>/dev/null 1>/dev/null
       fi
 
+   echo
+   docker ps -a
    echo
    exit   
 fi
@@ -200,6 +211,8 @@ if [ "$1" = "up" ]; then
       check wso2is
       [ $rc -gt 0 ] && $0 init 
       check omnidomain
+      [ $rc -gt 0 ] && $0 init
+      check remediate
       [ $rc -gt 0 ] && $0 init 
    fi
    
@@ -228,7 +241,7 @@ fi
 if [ "$1" = "down" ]; then
    if [ $# = 1 ]; then
       echo 
-      echo "Usage : $0 down [all|ism|omnidomain|wso2is|postgres|omnidata]"
+      echo "Usage : $0 down [all|ism|remediate|omnidomain|wso2is|postgres|omnidata]"
       echo
       exit
    elif [ "$2" = "all" ]; then stopremoveall;
@@ -280,6 +293,7 @@ if [ "$1" = "update" ]; then
    docker pull postgres:9.4
    docker pull $wso2is
    docker pull $domain
+   docker pull $remediate
    docker pull $workbench
    removeoldimages
    echo
@@ -289,4 +303,11 @@ if [ "$1" = "update" ]; then
 fi
 
 
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Unknown
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+echo
+echo "unknown omnidock command \"$1\""
+$0
  
