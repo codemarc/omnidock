@@ -5,54 +5,57 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+  <link href="http://fonts.googleapis.com/css?family=Lobster" rel="stylesheet" type="text/css">
+  <link href="http://fonts.googleapis.com/css?family=Cabin" rel="stylesheet" type="text/css">
   <link rel="stylesheet" href="assets/css/font-awesome.min.css">
+  <link rel="stylesheet" href="assets/css/omnidock.css">
   <script src="assets/js/jquery.min.js"></script>
   <script src="assets/js/bootstrap.min.js"></script>
 </head>
 <body class="container-fluid">
-<h2><i class="fa fa-ship"></i> OmniDock</h2>
+<h1><i class="fa fa-ship"></i> OmniDock</h2>
 <div class="list-group" style="margin-top:24px;">
   <a href="#" class="list-group-item">
-    <h3 class="list-group-item-heading">Workbench</h3>
+    <h2 class="list-group-item-heading">Workbench</h3>
     <div class="btn-toolbar">
-        <button name="ismb" href="9999" type="button" class="btn btn-well btn-link">
+        <button name="ismb" href="9999" type="button" class="c1 btn btn-well btn-link" >
         <i class="fa fa-check-square-o"></i> iWay Service Manager - Base</button>
-        <button name="opsm" href="9999/ism/appc?configuration=OmniPatient" type="button" class="btn btn-link">
+        <button name="opsm" href="9999/ism/appc?configuration=OmniPatient" type="button" class="c1 btn btn-link">
         <i class="fa fa-check-square-o"></i> OmniPatient Service Monitor</button>
     </div><p/>    
     <div class="row btn-toolbar">
-        <button name="dqcl" href="9502" type="button" class="btn btn-link">
+        <button name="dqcl" href="9502" type="button" class="c1 btn btn-link">
         <i class="fa fa-check-square-o"></i> DQS Cleansing</button>
-        <button name="dqmt" href="9504" type="button" class="btn btn-link">
+        <button name="dqmt" href="9504" type="button" class="c1 btn btn-link">
         <i class="fa fa-check-square-o"></i> DQS Matching</button>
-        <button name="dqmg" href="9506" type="button" class="btn btn-link">
+        <button name="dqmg" href="9506" type="button" class="c1 btn btn-link">
         <i class="fa fa-check-square-o"></i> DQS Merging</button>
     </div>
   </a>
   <a href="#" class="list-group-item">
-    <h3 class="list-group-item-heading">Management</h3>
+    <h2 class="list-group-item-heading">Management</h3>
     <div class="btn-toolbar">
-        <button name="opmc" href="8080/omni360/" type="button" class="btn btn-well btn-link" style="color:red">
-        Omni Patient Management Central</button>
-        <button name="oprs" href="9065/ism/channels?configuration=base" type="button" class="btn btn-well btn-link">
+        <button name="opmc" href="8080/omni360/" type="button" class="c2 btn btn-well btn-link">
+        <i class="fa fa-check-square-o"></i> Omni Patient Management Central</button>
+        <button name="oprs" href="9065/ism/channels?configuration=base" type="button" class="c2 btn btn-well btn-link">
         <i class="fa fa-check-square-o"></i> Omni Patient Remediation</button>
     </div>
   </a>
   <a href="#" class="list-group-item">
-    <h3 class="list-group-item-heading">Domain</h3>
+    <h2 class="list-group-item-heading">Domain</h3>
     <div class="btn-toolbar">
-        <button name="opds" href="8080/OmniDomain/" type="button" class="btn btn-well btn-link">
+        <button name="opds" href="8080/OmniDomain/" type="button" class="c3 btn btn-well btn-link">
         <i class="fa fa-check-square-o"></i> Omni 360 Domain Server</button>
-        <button name="opds" href="8080/OmniDomain/installationTest.jsp" type="button" class="btn btn-well btn-link">
+        <button name="opds" href="8080/OmniDomain/installationTest.jsp" type="button" class="c3 btn btn-well btn-link">
         <i class="fa fa-check-square-o"></i> Omni Domain Installation Test</button>
     </div>
   </a>
   <a href="#" class="list-group-item">
-     <h3 class="list-group-item-heading">Services</h3>
+     <h2 class="list-group-item-heading">Services</h3>
      <div class="row btn-toolbar">
-        <button name="wso2is" href="9443/carbon/" ssl="true" type="button" class="btn btn-link">
+        <button name="wso2is" href="9443/carbon/" ssl="true" type="button" class="c4 btn btn-link">
         <i class="fa fa-check-square-o"></i> WSO2 Identity Server Management Console</button>
-        <button name="rsti" href="9066" type="button" class="btn btn-link">
+        <button name="rsti" href="9066" type="button" class="c4 btn btn-link">
         <i class="fa fa-check-square-o"></i> Remediation Service Test Interface</button>
      </div>
   </a>
@@ -63,5 +66,6 @@
       window.open(proto+'://127.0.0.1:'+$(this).attr('href'),$(this).attr('name'));
       });
 </script>
+</svg>
 </body>
 </html>
