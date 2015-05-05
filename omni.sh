@@ -9,6 +9,7 @@ vibi=0.6
 
 # private registry
 repo=odin.ibi.com:5000
+dba=$repo/cibi/omni:dba
 wso2is=$repo/cibi/omni:wso2is
 domain=$repo/cibi/omni:domain
 remediate=$repo/cibi/omni:remediate
@@ -49,7 +50,7 @@ stopremove() {
 }
 
 stopremoveall() {
-   stopremove ism;stopremove remediate;stopremove omnidomain;stopremove wso2is;stopremove postgres
+   stopremove ism;stopremove remediate;stopremove omnidomain;stopremove wso2is;stopremove omnidba;stopremove postgres
    echo removing omnidata
    docker rm omnidata 2>/dev/null 1>/dev/null
 }
@@ -158,6 +159,15 @@ if [ "$1" = "init" ]; then
       docker run -d -h="postgres" --name postgres --volumes-from omnidata \
         -v /var/lib/postgresql/data -P -p 5432:5432 postgres:9.4 \
         2>/dev/null 1>/dev/null
+   fi
+   
+   # omnidba
+   docker ps | grep omnidba 2>/dev/null 1>/dev/null
+   if [ ! $? -eq 0 ]; then
+      echo starting omnidba
+      docker run -d -h="omnidba" --name omnidba \
+		--link postgres:postgres -p 5430:80 \
+		$dba 2>/dev/null 1>/dev/null
    fi
 
    if [ "$3" = "data" ]; then exit;fi;
@@ -291,6 +301,7 @@ fi
 if [ "$1" = "update" ]; then
    echo
    docker pull postgres:9.4
+   docker pull $dba
    docker pull $wso2is
    docker pull $domain
    docker pull $remediate
