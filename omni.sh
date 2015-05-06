@@ -229,7 +229,7 @@ if [ "$1" = "up" ]; then
            -p 6199:6199 -p 9502:9502 -p 9504:9504 -p 9506:9506 \
         -v $(pwd)/data/prop/DIB.properties:/ibi/iway7/config/OmniPatient/resource/DIB.properties \
         -v $(pwd)/data/omni:/omni \
-         $workbench 2>&1 >/dev/null
+        "$workbench" 2>&1 >/dev/null
       docker logs $cname
    fi
    
@@ -239,13 +239,14 @@ if [ "$1" = "up" ]; then
       echo "$($ds) starting $cname as $opmc"
       docker run -d -h="$cname" --name $cname \
         --dns=$hostip --env sentinel=$hostip \
+        --link domain:domain \
         --link wso2is:wso2is \
-        -P -p 8080:8080 \
+        -P -p 8888:8080 \
         -v $(pwd)/data/opmc/logs/tomcat7:/ibi/tomcat7/logs \
         -v $(pwd)/data/opmc/logs/remediation:/ibi/tomcat7/webapps/RemediationService/WEB-INF/config/base/log \
         -v $(pwd)/data/opmc/domains:/ibi/opmc/domains \
         -v $(pwd)/data/opmc/properties:/ibi/opmc/properties \
-         $opmc 2>&1 >/dev/null
+         "$opmc" 2>&1 >/dev/null
       docker logs $cname
    fi
    
