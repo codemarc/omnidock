@@ -13,3 +13,9 @@ body{
 	background: linear-gradient(180deg, rgba(144,182,232,1) 0%, rgba(255,255,255,1) 100%); /* w3c */
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#90B6E8', endColorstr='#FFFFFF',GradientType=0 ); /* ie6-9 */
 }
+.list-group {	
+	-webkit-box-shadow: 16px 16px 5px 0px rgba(128,128,128,0.75);
+	-moz-box-shadow: 16px 16px 5px 0px rgba(128,128,128,0.75);
+	box-shadow: 16px 16px 5px 0px rgba(128,128,128,0.75);
+	border: 1px solid #404040;
+}
