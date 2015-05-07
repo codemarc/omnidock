@@ -161,7 +161,7 @@ if [ "$1" = "up" ]; then
    if [ $? -eq 0 ]; then echo "$($ds) (checked) '$cname'";else
       echo "$($ds) starting $cname as $postgres"      
       docker run -d -h="$cname" --name $cname \
-        --volumes-from ${clist[0]} \
+        --volumes-from data \
         -v /var/lib/postgresql/data -P -p 5432:5432 \
         "$postgres" 2>/dev/null 1>/dev/null
    fi
