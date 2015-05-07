@@ -6,13 +6,10 @@
 ds="date +%Y-%m-%d:%H:%M:%S"
 
 # set my name and version
-vibi=0.7
+vibi=0.8
 
 # private registry
 repo=odin.ibi.com:5000
-
-# container list
-declare -a clist=("data" "postgres" "dba" "wso2is" "domain" "remediate" "workbench" "opmc")
 
 # hostname to image mappings
 data=postgres:9.4
@@ -28,15 +25,7 @@ opmc=$repo/cibi/omni:opmc
 # get my host name and ip address
 hostnm=$(hostname)
 
-
 # define helper functions
-
-contains() {
-  local e
-  for e in "${@:2}"; do [[ "$e" == "$1" ]] && return 0; done
-  return 1
-}
-
 showstatus() {
    echo;docker ps -a;echo;$0 ip
 }
@@ -62,9 +51,10 @@ stopremove() {
 }
 
 stopremoveall() {
-    for ((i=${#clist[@]}-1; i>=0; i--))
+   clist='opmc workbench remediate domain wso2is dba postgres data' 
+   for i in $clist
     do
-       stopremove "${clist[$i]}"
+       stopremove $i
     done
 }
 
@@ -151,11 +141,12 @@ fi
 # up
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 if [ "$1" = "up" ]; then
+'opmc workbench remediate domain wso2is dba postgres data'
 
    if [ "$2" = "all" ]; then stopremoveall;fi;
    
    # data
-   cname=${clist[0]}; docker ps -a | grep $cname 2>/dev/null 1>/dev/null
+   cname=data; docker ps -a | grep $cname 2>/dev/null 1>/dev/null
    if [ $? -eq 0 ]; then echo "$($ds) (checked) '$cname'";else
       echo "$($ds) creating new $cname container" 
       docker create -h="$cname" --name $cname -v /var/lib/postgresql/data \
@@ -166,7 +157,7 @@ if [ "$1" = "up" ]; then
    fi
 
    # postgres
-   cname=${clist[1]}; docker ps | grep $cname 2>/dev/null 1>/dev/null
+   cname=postgres; docker ps | grep $cname 2>/dev/null 1>/dev/null
    if [ $? -eq 0 ]; then echo "$($ds) (checked) '$cname'";else
       echo "$($ds) starting $cname as $postgres"      
       docker run -d -h="$cname" --name $cname \
@@ -176,7 +167,7 @@ if [ "$1" = "up" ]; then
    fi
    
    # dba
-   cname=${clist[2]}; docker ps | grep $cname 2>/dev/null 1>/dev/null
+   cname=dba; docker ps | grep $cname 2>/dev/null 1>/dev/null
    if [ $? -eq 0 ]; then echo "$($ds) (checked) '$cname'";else
       echo "$($ds) starting $cname as $dba"      
       docker run -d -h="$cname" --name $cname \
@@ -189,7 +180,7 @@ if [ "$1" = "up" ]; then
 
 
    # wso2is
-   cname=${clist[3]}; docker ps | grep $cname 2>/dev/null 1>/dev/null
+   cname=wso2is; docker ps | grep $cname 2>/dev/null 1>/dev/null
    if [ $? -eq 0 ]; then echo "$($ds) (checked) '$cname'";else
       echo "$($ds) starting $cname as $wso2is"
       docker run -d -h="$cname" --name $cname \
@@ -198,7 +189,7 @@ if [ "$1" = "up" ]; then
    fi
 
    # domain
-   cname=${clist[4]}; docker ps | grep $cname 2>/dev/null 1>/dev/null
+   cname=domain; docker ps | grep $cname 2>/dev/null 1>/dev/null
    if [ $? -eq 0 ]; then echo "$($ds) (checked) '$cname'";else
       echo "$($ds) starting $cname as $domain"
       docker run -d -h="$cname" --name $cname \
@@ -208,7 +199,7 @@ if [ "$1" = "up" ]; then
    fi
 
    # remediate
-   cname=${clist[5]}; docker ps | grep $cname 2>/dev/null 1>/dev/null
+   cname=remediate; docker ps | grep $cname 2>/dev/null 1>/dev/null
    if [ $? -eq 0 ]; then echo "$($ds) (checked) '$cname'";else
       echo "$($ds) starting $cname as $remediate"
       docker run -d -h="$cname" --name $cname \
@@ -219,7 +210,7 @@ if [ "$1" = "up" ]; then
 
 
    # workbench
-   cname=${clist[6]}; docker ps | grep $cname 2>/dev/null 1>/dev/null
+   cname=workbench; docker ps | grep $cname 2>/dev/null 1>/dev/null
    if [ $? -eq 0 ]; then echo "$($ds) (checked) '$cname'";else
       echo "$($ds) starting $cname as $workbench"
       docker run -d -h="$cname" --name $cname \
@@ -227,14 +218,14 @@ if [ "$1" = "up" ]; then
         --link postgres:postgres \
         -P -p 9999:9999 -p 9000:9000 -p 9001:9001 -p 9022:22   \
            -p 6199:6199 -p 9502:9502 -p 9504:9504 -p 9506:9506 \
-        -v $(pwd)/data/prop/DIB.properties:/ibi/iway7/config/OmniPatient/resource/DIB.properties \
+        -v $(pwd)/data/omni/prop/DIB.properties:/ibi/iway7/config/OmniPatient/resource/DIB.properties \
         -v $(pwd)/data/omni:/omni \
         "$workbench" 2>&1 >/dev/null
       docker logs $cname
    fi
    
    # opmc
-   cname=${clist[7]}; docker ps | grep $cname 2>/dev/null 1>/dev/null
+   cname=opmc; docker ps | grep $cname 2>/dev/null 1>/dev/null
    if [ $? -eq 0 ]; then echo "$($ds) (checked) '$cname'";else
       echo "$($ds) starting $cname as $opmc"
       docker run -d -h="$cname" --name $cname \
@@ -243,9 +234,6 @@ if [ "$1" = "up" ]; then
         --link wso2is:wso2is \
         -P -p 8888:8080 \
         -v $(pwd)/data/opmc/logs/tomcat7:/ibi/tomcat7/logs \
-        -v $(pwd)/data/opmc/logs/remediation:/ibi/tomcat7/webapps/RemediationService/WEB-INF/config/base/log \
-        -v $(pwd)/data/opmc/domains:/ibi/opmc/domains \
-        -v $(pwd)/data/opmc/properties:/ibi/opmc/properties \
          "$opmc" 2>&1 >/dev/null
       docker logs $cname
    fi
@@ -261,16 +249,11 @@ fi
 if [ "$1" = "down" ]; then
    if [ $# = 1 ]; then
       echo
-      echo Usage : $0 down [all "${clist[@]}"] 
+      echo Usage : $0 down [all data postgres dba wso2is domain remediate workbench opmc] 
       echo
       exit
    elif [ "$2" = "all" ]; then stopremoveall;
-   else
-      contains "$2" "${clist[@]}"
-      if [ $? -eq 1 ]; then 
-      	$0 down
-      	exit
-      fi 
+   else 
       stopremove $2
    fi
    showstatus
@@ -282,14 +265,13 @@ fi
 # update
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 if [ "$1" = "update" ]; then
-   for cname in "${clist[@]}"
+   clist='postgres dba wso2is domain remediate workbench opmc'
+   for cname in $clist
    do
-      if [ ! "$cname" = "data" ]; then
-         eval iname=\$$cname
-         echo
-         echo docker pull $iname
-         docker pull $iname
-      fi
+      eval iname=\$$cname
+      echo
+      echo docker pull $iname
+      docker pull $iname
    done
    removeoldimages
    echo
