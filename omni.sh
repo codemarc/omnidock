@@ -141,7 +141,6 @@ fi
 # up
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 if [ "$1" = "up" ]; then
-'opmc workbench remediate domain wso2is dba postgres data'
 
    if [ "$2" = "all" ]; then stopremoveall;fi;
    
