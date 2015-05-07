@@ -9,7 +9,7 @@ echo "Running on $OS"
 ([ ! "$USERPROFILE" == "" ] && [ ! "$HOME" == "$USERPROFILE" ]) && export HOME=$USERPROFILE
 
 # Set the omnidock location to a known place
-ODOCK=$HOME/omnidock
+export ODOCK=$HOME/omnidock
 
 # Add to update the omnidock files
 mkdir -p $ODOCK && cd $ODOCK
@@ -110,8 +110,9 @@ if [ "$?" == "0" ]; then
    if [ "$?" == "0" ]; then
       eval $(boot2docker shellinit)
       export PS1="\\n\\h:\\W \\u> "
+      clear
       ./omni.sh
-      $SHELL 
+      bash 
    else 
       boot2docker ssh
    fi

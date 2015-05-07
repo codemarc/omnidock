@@ -114,10 +114,11 @@ fi
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 if [ "$1" = "ssh" ]; then
    if [ $# -lt 2 ]; then
-      [ $(docker ps -qa | wc -w) -gt 0 ] && (echo "ssh requires a name:";echo "$(docker ps -a -q | xargs docker inspect --format='{{.Config.Hostname}}')")
+      [ $(docker ps -qa | wc -w) -gt 0 ] && (echo "ssh requires a name (. for boot2docker):";echo "$(docker ps -a -q | xargs docker inspect --format='{{.Config.Hostname}}')")
       echo
    else
-      ssh ibi@$(docker inspect --format='{{.NetworkSettings.IPAddress}}' $2)
+      if [ "$2" = "." ]; then boot2docker ssh;
+      else ssh ibi@$(docker inspect --format='{{.NetworkSettings.IPAddress}}' $2)
    fi
    exit
 fi
