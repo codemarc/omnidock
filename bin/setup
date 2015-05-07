@@ -106,7 +106,12 @@ if [ "$?" == "0" ]; then
       "$vbm" controlvm "boot2docker-vm" natpf1 "tcp-port8080,tcp,127.0.0.1,8080,,8080" 2>/dev/null
    fi
 
-   boot2docker ssh
+   which docker 2>/dev/null
+   if [ "$?" == "0" ]; then 
+      eval $(boot2docker shellinit)
+   else 
+      boot2docker ssh
+   fi
    
 else 
    # run my boot2docker init script
