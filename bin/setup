@@ -107,8 +107,11 @@ if [ "$?" == "0" ]; then
    fi
 
    which docker 2>/dev/null
-   if [ "$?" == "0" ]; then 
+   if [ "$?" == "0" ]; then
       eval $(boot2docker shellinit)
+      export PS1="\\n\\h:\\W \\u> "
+      ./omni.sh
+      $SHELL 
    else 
       boot2docker ssh
    fi
