@@ -27,7 +27,7 @@ hostnm=$(hostname)
 
 # define helper functions
 showstatus() {
-   echo;docker ps -a;echo;$0 ip
+   $0 ip
 }
 
 getmyip() {
@@ -145,8 +145,6 @@ fi
 # up
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 if [ "$1" = "up" ]; then
-
-   if [ "$2" = "all" ]; then stopremoveall;fi;
    
    # data
    cname=data; docker ps -a | grep $cname 2>/dev/null 1>/dev/null
@@ -178,9 +176,8 @@ if [ "$1" = "up" ]; then
         "$dba" 2>/dev/null 1>/dev/null
    fi
 
-   # end here if up data or up all data
-   if [ "$2" = "data" ] || [ "$3" = "data" ]; then echo;exit;fi;
-
+   # end here if up data
+   if [ "$2" = "data" ]; then echo;exit;fi;
 
    # wso2is
    cname=wso2is; docker ps | grep $cname 2>/dev/null 1>/dev/null
@@ -190,7 +187,7 @@ if [ "$1" = "up" ]; then
         -P -p 9443:9443 \
         "$wso2is" 2>/dev/null 1>/dev/null
    fi
-
+   
    # domain
    cname=domain; docker ps | grep $cname 2>/dev/null 1>/dev/null
    if [ $? -eq 0 ]; then echo "$($ds) (checked) '$cname'";else
@@ -200,7 +197,7 @@ if [ "$1" = "up" ]; then
         -P -p 8080:8080 \
         "$domain" 2>/dev/null 1>/dev/null
    fi
-
+   
    # remediate
    cname=remediate; docker ps | grep $cname 2>/dev/null 1>/dev/null
    if [ $? -eq 0 ]; then echo "$($ds) (checked) '$cname'";else
@@ -210,7 +207,6 @@ if [ "$1" = "up" ]; then
         -P -p 9065:9999 -p 9066:9280 -p 9100:9100 -p 23:23 \
         "$remediate" 2>/dev/null 1>/dev/null
    fi
-
 
    # workbench
    cname=workbench; docker ps | grep $cname 2>/dev/null 1>/dev/null
@@ -255,7 +251,8 @@ if [ "$1" = "down" ]; then
       echo Usage : $0 down [all data postgres dba wso2is domain remediate workbench opmc] 
       echo
       exit
-   elif [ "$2" = "all" ]; then stopremoveall;
+   elif [ "$2" = "all" ]; then 
+      stopremoveall
    else 
       stopremove $2
    fi
