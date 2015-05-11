@@ -155,6 +155,8 @@ if [ "$1" = "up" ]; then
       echo "$($ds) loading initial metadata"
       docker run --rm --volumes-from $cname -v $(pwd)/data:/data \
         "$data" tar -xzf /data/load/omnidb.tgz
+      echo "$($ds) sleep 3 secs"        
+      sleep 3
    fi
 
    # postgres
@@ -165,6 +167,8 @@ if [ "$1" = "up" ]; then
         --volumes-from data \
         -v /var/lib/postgresql/data -P -p 5432:5432 \
         "$postgres" 2>/dev/null 1>/dev/null
+      echo "$($ds) sleep 3 secs"        
+      sleep 3
    fi
    
    # dba
@@ -174,6 +178,9 @@ if [ "$1" = "up" ]; then
       docker run -d -h="$cname" --name $cname \
         --link postgres:postgres -p 5430:80 \
         "$dba" 2>/dev/null 1>/dev/null
+      echo "$($ds) sleep 3 secs"        
+      sleep 3
+        
    fi
 
    # end here if up data
@@ -186,6 +193,9 @@ if [ "$1" = "up" ]; then
       docker run -d -h="$cname" --name $cname \
         -P -p 9443:9443 \
         "$wso2is" 2>/dev/null 1>/dev/null
+      echo "$($ds) sleep 3 secs"        
+      sleep 3
+        
    fi
    
    # domain
@@ -196,6 +206,8 @@ if [ "$1" = "up" ]; then
         --link postgres:postgres \
         -P -p 8080:8080 \
         "$domain" 2>/dev/null 1>/dev/null
+      echo "$($ds) sleep 3 secs"        
+      sleep 3
    fi
    
    # remediate
