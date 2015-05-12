@@ -58,19 +58,20 @@ You use the Boot2Docker client to control the virtualized Docker Engine thru ssh
 		./omni.sh up all
 
 	At this point you should have a docker machine (boot2docker ip is usually 192.168.59.103) available to your development environment, with the integrators tooling available. You should validate your connection with the database by using pgAdmin and connecting to the postgres instance at 192.168.59.103:5432. You should find the dqreo and patient databases already loaded with metadata.
-	
+
+
 	$ ./omni.sh  
 	Running on omega (172.19.2.196)  
 	
-	OmniDock v0.8 Usage: omni [command]
-	A wrapper to start/stop/update the Omni Integrators Workbench
-	
+	OmniDock v0.8 Usage: omni [command]  
+	A wrapper to start/stop/update the Omni Integrators Workbench  
+	  
 	Commands:  
-	ip		lists known ip addresses
-	ssh		ssh to the named container
-	logs		show the logs of the named container
-	up		creates and starts test environment
-	down		stops and removes test environment
+	ip		lists known ip addresses  
+	ssh		ssh to the named container  
+	logs		show the logs of the named container  
+	up		creates and starts test environment  
+	down		stops and removes test environment  
 	update		updates container images  
 
 
