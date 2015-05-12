@@ -70,6 +70,21 @@ boot2docker version 2>/dev/null
 if [ "$?" == "0" ]; then   
    
    boot2docker init
+   
+   # virtual machine manage minimum memory
+   vbm="VBoxManage"
+   if [ "$OS" == "Windows_NT" ]; then
+      vbm="$PROGRAMW6432\\Oracle\\VirtualBox\\VBoxManage"
+   fi
+   
+   if [ "$(boot2docker status)" == "poweroff" ]; then
+      m=$(VBoxManage showvminfo boot2docker-vm | grep "Memory" | awk '{print $3}' | rev | cut -c3- | rev)
+      if [ $m -lt 4096 ]; then
+         echo setting boot2docker-vm to 4096M
+         VBoxManage modifyvm "boot2docker-vm" --memory 4096
+      fi
+   fi
+   
    boot2docker start
    
    bip=$(boot2docker ip)
@@ -87,11 +102,6 @@ if [ "$?" == "0" ]; then
    source bin/setenv
       
    # virtual machine manage boot2docker ports
-   vbm="VBoxManage"
-   if [ "$OS" == "Windows_NT" ]; then
-      vbm="$PROGRAMW6432\\Oracle\\VirtualBox\\VBoxManage"
-   fi
-   
    if [ "$(boot2docker status)" == "running" ]; then
       "$vbm" controlvm "boot2docker-vm" natpf1 "tcp-port5432,tcp,127.0.0.1,5432,,5432" 2>/dev/null
       "$vbm" controlvm "boot2docker-vm" natpf1 "tcp-port5430,tcp,127.0.0.1,5430,,5430" 2>/dev/null
@@ -99,6 +109,8 @@ if [ "$?" == "0" ]; then
       "$vbm" controlvm "boot2docker-vm" natpf1 "tcp-port9000,tcp,127.0.0.1,9000,,9000" 2>/dev/null
       "$vbm" controlvm "boot2docker-vm" natpf1 "tcp-port9001,tcp,127.0.0.1,9001,,9001" 2>/dev/null
       "$vbm" controlvm "boot2docker-vm" natpf1 "tcp-port9001,tcp,127.0.0.1,9022,,9022" 2>/dev/null
+      "$vbm" controlvm "boot2docker-vm" natpf1 "tcp-port9065,tcp,127.0.0.1,9065,,9065" 2>/dev/null
+      "$vbm" controlvm "boot2docker-vm" natpf1 "tcp-port9066,tcp,127.0.0.1,9066,,9066" 2>/dev/null
       "$vbm" controlvm "boot2docker-vm" natpf1 "tcp-port9502,tcp,127.0.0.1,9502,,9502" 2>/dev/null
       "$vbm" controlvm "boot2docker-vm" natpf1 "tcp-port9504,tcp,127.0.0.1,9504,,9504" 2>/dev/null
       "$vbm" controlvm "boot2docker-vm" natpf1 "tcp-port9506,tcp,127.0.0.1,9506,,9506" 2>/dev/null
