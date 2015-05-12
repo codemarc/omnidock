@@ -78,10 +78,10 @@ if [ "$?" == "0" ]; then
    fi
    
    if [ "$(boot2docker status)" == "poweroff" ]; then
-      m=$(VBoxManage showvminfo boot2docker-vm | grep "Memory" | awk '{print $3}' | rev | cut -c3- | rev)
-      if [ "$m" -lt "4096" ]; then
+      m=$("$vbm" showvminfo boot2docker-vm | grep "Memory" | awk '{print $3}' | rev | cut -c3- | rev)
+      if [ $m -lt 4096 ]; then
          echo setting boot2docker-vm to 4096M
-         VBoxManage modifyvm "boot2docker-vm" --memory 4096
+         "$vbm" modifyvm "boot2docker-vm" --memory 4096
       fi
    fi
    
