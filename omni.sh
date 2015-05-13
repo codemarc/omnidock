@@ -222,8 +222,8 @@ if [ "$1" = "up" ]; then
               "$wso2is" 2>/dev/null 1>/dev/null
             echo "$($ds) sleep 3 secs"
             sleep 3
-        fi
-        if [ "$2" = "$cname" ]; then echo;exit;fi;
+         fi
+         if [ "$2" = "$cname" ]; then echo;exit;fi;
       fi
 
       # domain
@@ -234,9 +234,9 @@ if [ "$1" = "up" ]; then
             docker run -d -h="$cname" --name $cname \
               --link postgres:postgres \
               -P -p 8080:8080 \
-           "$domain" 2>/dev/null 1>/dev/null
-           echo "$($ds) sleep 3 secs"
-           sleep 3
+              "$domain" 2>/dev/null 1>/dev/null
+            echo "$($ds) sleep 3 secs"
+            sleep 3
          fi
          if [ "$2" = "$cname" ]; then echo;exit;fi;
       fi
@@ -247,8 +247,7 @@ if [ "$1" = "up" ]; then
          if [ $? -eq 0 ]; then echo "$($ds) (checked) '$cname'";else
             echo "$($ds) starting $cname as $remediate"
             docker run -d -h="$cname" --name $cname \
-              --link postgres:postgres \ 
-              --link wso2is:wso2is \
+              --link postgres:postgres --link wso2is:wso2is \
               -P -p 9065:9999 -p 9066:9280 -p 9100:9100 -p 23:23 \
               "$remediate" 2>/dev/null 1>/dev/null
          fi
@@ -280,8 +279,7 @@ if [ "$1" = "up" ]; then
             echo "$($ds) starting $cname as $opmc"
             docker run -d -h="$cname" --name $cname \
               --dns=$hostip --env sentinel=$hostip \
-              --link domain:domain \
-              --link wso2is:wso2is \
+              --link domain:domain --link wso2is:wso2is \
               -P -p 8888:8080 \
               -v $(pwd)/data/opmc/logs/tomcat7:/ibi/tomcat7/logs \
               "$opmc" 2>&1 >/dev/null
