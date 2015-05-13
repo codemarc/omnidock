@@ -289,7 +289,8 @@ if [ "$1" = "up" ]; then
          fi
          if [ "$2" = "$cname" ]; then echo;exit;fi;
       fi
-   
+      
+   fi
    showstatus
    exit
 fi
