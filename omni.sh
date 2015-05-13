@@ -6,7 +6,10 @@
 ds="date +%Y-%m-%d:%H:%M:%S"
 
 # set my name and version
-vibi=0.9
+vibi="OmniDock v0.9"
+cpy1="Copyright (c) 2015 Information Builders, Inc."
+cpy2="All Rights Reserved."
+ 
 
 # private registry
 repo=odin.ibi.com:5000
@@ -58,9 +61,15 @@ stopremoveall() {
     done
 }
 
+signon() {
+   echo
+   echo "$vibi"
+   echo "$cpy1"
+   echo "$cpy2"
+   echo
+}
 
 # figure out a good host ip
-echo
 boot2docker version 1>/dev/null 2>/dev/null
 if [ $? -eq 0 ]; then
    boot2docker ip 1>/dev/null 2>/dev/null
@@ -85,16 +94,18 @@ fi
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
 if [ $# -lt 1 ]; then
    echo "Running on $hostnm ($hostip)"
-   echo
-   echo "OmniDock v$vibi Usage: omni [command]"
+   signon
+   echo "Usage: omni [command]"
    echo "A wrapper to start/stop/update the Omni Integrators Workbench"
    echo
    echo "Commands:"
    echo "  ip        lists known ip addresses"
    echo "  ssh       ssh to the named container"
    echo "  logs      show the logs of the named container"
-   echo "  up        creates and starts test environment"
-   echo "  down      stops and removes test environment"
+   echo "  start     creates and starts test environment container"
+   echo "  stop      stops and removes test environment container"
+   echo "  up        shortcut for start all"
+   echo "  down      shortcut for stop all"
    echo "  update    updates container images"
    echo
    exit
@@ -107,9 +118,10 @@ fi
 if [ "$1" = "ip" ]; then
    if [ $# -lt 2 ]; then
       echo
-      echo $hostnm $hostip "(localhost)"
+      echo "Containers on $hostnm ($hostip)"
+      echo
       cc=$(docker ps -qa | wc -w)
-      [ $cc -gt 0 ] && docker ps -a -q | xargs docker inspect --format='{{.Config.Hostname}} {{.NetworkSettings.IPAddress}} ({{.Config.Image}})'
+      [ $cc -gt 0 ] && docker ps -a -q | xargs docker inspect --format='{{.NetworkSettings.IPAddress}} {{.Config.Hostname}} ({{.Config.Image}})'
       echo
    else
       docker inspect --format='{{.NetworkSettings.IPAddress}}' $2
@@ -151,161 +163,181 @@ fi
 
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# up
+# up or start
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-if [ "$1" = "up" ]; then
-   
-  if [ $# = 1 ]; then
-      echo
-      echo Usage: $0 up [all data postgres dba wso2is domain remediate workbench opmc]
-      echo
-      exit 0
-  else
-      # data
-      if [ "$2" = "all" ] || [ "$2" = "data" ] || [ "$2" = "postgres" ] || \
-         [ "$2" = "dba" ] || [ "$2" = "domain" ] || [ "$2" = "remediate" ] || \
-         [ "$2" = "workbench" ] || [ "$2" = "opmc" ]; then
-         cname=data; docker ps -a | grep $cname 2>/dev/null 1>/dev/null
-         if [ $? -eq 0 ]; then echo "$($ds) (checked) '$cname'";else
-            echo "$($ds) creating new $cname container" 
-            docker create -h="$cname" --name $cname -v /var/lib/postgresql/data \
-              "$data" 2>&1 >/dev/null
-            echo "$($ds) loading initial metadata"
-            docker run --rm --volumes-from $cname -v $(pwd)/data:/data \
-              "$data" tar -xzf /data/load/omnidb.tgz
-            echo "$($ds) sleep 3 secs"
-            sleep 3
-         fi
+if [ "$1" = "up" ] || [ "$1" = "start" ]; then
+   signon
+   if [ $# = 1 ]; then
+      if [ "$1" = "up" ]; then
+         set -- "${@:1}" "all"
+      else 
+         echo Usage: $0 start [all data postgres dba wso2is domain remediate workbench opmc]
+         echo
+         exit 0
       fi
-
-      # postgres
-      if [ "$2" = "all" ] || [ "$2" = "data" ] || [ "$2" = "postgres" ] || \
-         [ "$2" = "dba" ] || [ "$2" = "domain" ] || [ "$2" = "remediate" ] || \
-         [ "$2" = "workbench" ] || [ "$2" = "opmc" ]; then
-         cname=postgres; docker ps | grep $cname 2>/dev/null 1>/dev/null
-         if [ $? -eq 0 ]; then echo "$($ds) (checked) '$cname'";else
-            echo "$($ds) starting $cname as $postgres"      
-            docker run -d -h="$cname" --name $cname \
-              --volumes-from data \
-              -v /var/lib/postgresql/data -P -p 5432:5432 \
-              "$postgres" 2>/dev/null 1>/dev/null
-             echo "$($ds) sleep 3 secs"        
-            sleep 3
-         fi
-         if [ "$2" = "$cname" ]; then echo;exit;fi;
-      fi
-
-      # dba
-      if [ "$2" = "all" ] || [ "$2" = "data" ] || [ "$2" = "dba" ]; then
-         cname=dba; docker ps | grep $cname 2>/dev/null 1>/dev/null
-         if [ $? -eq 0 ]; then echo "$($ds) (checked) '$cname'";else
-            echo "$($ds) starting $cname as $dba"      
-            docker run -d -h="$cname" --name $cname \
-              --link postgres:postgres -p 5430:80 \
-              "$dba" 2>/dev/null 1>/dev/null
-            echo "$($ds) sleep 3 secs"        
-            sleep 3
-         fi
-         if [ "$2" = "$cname" ]; then echo;exit;fi;
-      fi
-
-      # end here if up data
-      if [ "$2" = "data" ]; then echo;exit;fi;
-
-      # wso2is
-      if [ "$2" = "all" ] || [ "$2" = "wso2is" ] || [ "$2" = "remediate"] || [ "$2" = "opmc" ]; then
-         cname=wso2is; docker ps | grep $cname 2>/dev/null 1>/dev/null
-         if [ $? -eq 0 ]; then echo "$($ds) (checked) '$cname'";else
-            echo "$($ds) starting $cname as $wso2is"
-            docker run -d -h="$cname" --name $cname \
-              -P -p 9443:9443 \
-              "$wso2is" 2>/dev/null 1>/dev/null
-            echo "$($ds) sleep 3 secs"
-            sleep 3
-         fi
-         if [ "$2" = "$cname" ]; then echo;exit;fi;
-      fi
-
-      # domain
-      if [ "$2" = "all" ] || [ "$2" = "domain" ] || [ "$2" = "remediate" ]; then
-         cname=domain; docker ps | grep $cname 2>/dev/null 1>/dev/null
-         if [ $? -eq 0 ]; then echo "$($ds) (checked) '$cname'";else
-            echo "$($ds) starting $cname as $domain"
-            docker run -d -h="$cname" --name $cname \
-              --link postgres:postgres \
-              -P -p 8080:8080 \
-              "$domain" 2>/dev/null 1>/dev/null
-            echo "$($ds) sleep 3 secs"
-            sleep 3
-         fi
-         if [ "$2" = "$cname" ]; then echo;exit;fi;
-      fi
-
-      # remediate
-      if [ "$2" = "all" ] || [ "$2" = "remediate" ]; then
-         cname=remediate; docker ps | grep $cname 2>/dev/null 1>/dev/null
-         if [ $? -eq 0 ]; then echo "$($ds) (checked) '$cname'";else
-            echo "$($ds) starting $cname as $remediate"
-            docker run -d -h="$cname" --name $cname \
-              --link postgres:postgres --link wso2is:wso2is \
-              -P -p 9065:9999 -p 9066:9280 -p 9100:9100 -p 23:23 \
-              "$remediate" 2>/dev/null 1>/dev/null
-         fi
-         if [ "$2" = "$cname" ]; then echo;exit;fi;
-      fi
-
-      # workbench
-      if [ "$2" = "all" ] || [ "$2" = "workbench" ]; then
-         cname=workbench; docker ps | grep $cname 2>/dev/null 1>/dev/null
-         if [ $? -eq 0 ]; then echo "$($ds) (checked) '$cname'";else
-            echo "$($ds) starting $cname as $workbench"
-            docker run -d -h="$cname" --name $cname \
-              --dns=$hostip --env sentinel=$hostip \
-              --link postgres:postgres \
-              -P -p 9999:9999 -p 9000:9000 -p 9001:9001 -p 9022:22   \
-                 -p 6199:6199 -p 9502:9502 -p 9504:9504 -p 9506:9506 \
-              -v $(pwd)/data/omni/prop/DIB.properties:/ibi/iway7/config/OmniPatient/resource/DIB.properties \
-              -v $(pwd)/data/omni:/omni \
-              "$workbench" 2>&1 >/dev/null
-            docker logs $cname
-         fi
-         if [ "$2" = "$cname" ]; then echo;exit;fi;
-      fi
-
-      # opmc
-      if [ "$2" = "all" ] || [ "$2" = "opmc" ]; then
-         cname=opmc; docker ps | grep $cname 2>/dev/null 1>/dev/null
-         if [ $? -eq 0 ]; then echo "$($ds) (checked) '$cname'";else
-            echo "$($ds) starting $cname as $opmc"
-            docker run -d -h="$cname" --name $cname \
-              --dns=$hostip --env sentinel=$hostip \
-              --link domain:domain --link wso2is:wso2is \
-              -P -p 8888:8080 \
-              -v $(pwd)/data/opmc/logs/tomcat7:/ibi/tomcat7/logs \
-              "$opmc" 2>&1 >/dev/null
-            docker logs $cname
-         fi
-         if [ "$2" = "$cname" ]; then echo;exit;fi;
-      fi
-      
    fi
+
+   # data
+   if [ "$2" = "all" ] || [ "$2" = "data" ] || [ "$2" = "postgres" ] || \
+      [ "$2" = "dba" ] || [ "$2" = "domain" ] || [ "$2" = "remediate" ] || \
+      [ "$2" = "workbench" ] || [ "$2" = "opmc" ]; then
+      cname=data; docker ps -a | grep $cname 2>/dev/null 1>/dev/null
+      if [ $? -eq 0 ]; then echo "$($ds) (checked) '$cname'";else
+         echo "$($ds) creating new $cname container" 
+         docker create -h="$cname" --name $cname -v /var/lib/postgresql/data \
+           "$data" 2>&1 >/dev/null
+         echo "$($ds) loading initial metadata"
+         docker run --rm --volumes-from $cname -v $(pwd)/data:/data \
+           "$data" tar -xzf /data/load/omnidb.tgz
+         echo "$($ds) sleep 3 secs"
+         sleep 3
+      fi
+   fi
+
+   # postgres
+   if [ "$2" = "all" ] || [ "$2" = "data" ] || [ "$2" = "postgres" ] || \
+      [ "$2" = "dba" ] || [ "$2" = "domain" ] || [ "$2" = "remediate" ] || \
+      [ "$2" = "workbench" ] || [ "$2" = "opmc" ]; then
+      cname=postgres; docker ps | grep $cname 2>/dev/null 1>/dev/null
+      if [ $? -eq 0 ]; then echo "$($ds) (checked) '$cname'";else
+         echo "$($ds) starting $cname as $postgres"
+         docker run -d -h="$cname" --name $cname \
+           --volumes-from data \
+           -v /var/lib/postgresql/data -P -p 5432:5432 \
+           "$postgres" 2>/dev/null 1>/dev/null
+         echo "$($ds) sleep 3 secs"
+         sleep 3
+      fi
+      if [ "$2" = "$cname" ]; then echo;exit;fi;
+   fi
+
+   # dba
+   if [ "$2" = "all" ] || [ "$2" = "data" ] || [ "$2" = "dba" ]; then
+      cname=dba; docker ps | grep $cname 2>/dev/null 1>/dev/null
+      if [ $? -eq 0 ]; then echo "$($ds) (checked) '$cname'";else
+         echo "$($ds) starting $cname as $dba"
+         docker run -d -h="$cname" --name $cname \
+           --link postgres:postgres -p 5430:80 \
+           "$dba" 2>/dev/null 1>/dev/null
+         echo "$($ds) sleep 3 secs"
+         sleep 3
+      fi
+      if [ "$2" = "$cname" ]; then echo;exit;fi;
+   fi
+
+   # end here if up data
+   if [ "$2" = "data" ]; then echo;exit;fi;
+
+   # wso2is
+   if [ "$2" = "all" ] || [ "$2" = "wso2is" ] || [ "$2" = "remediate" ] || [ "$2" = "opmc" ]; then
+      cname=wso2is; docker ps | grep $cname 2>/dev/null 1>/dev/null
+      if [ $? -eq 0 ]; then echo "$($ds) (checked) '$cname'";else
+         echo "$($ds) starting $cname as $wso2is"
+         docker run -d -P -h="$cname" --name $cname \
+           -p 9443:9443 \
+           "$wso2is" 2>/dev/null 1>/dev/null
+         echo "$($ds) sleep 3 secs"
+         sleep 3
+      fi
+      if [ "$2" = "$cname" ]; then echo;exit;fi;
+   fi
+
+   # domain
+   if [ "$2" = "all" ] || [ "$2" = "domain" ] || [ "$2" = "remediate" ]; then
+      cname=domain; docker ps | grep $cname 2>/dev/null 1>/dev/null
+      if [ $? -eq 0 ]; then echo "$($ds) (checked) '$cname'";else
+         echo "$($ds) starting $cname as $domain"
+         docker run -d -P -h="$cname" --name $cname \
+           --link postgres:postgres \
+           -p 8080:8080 \
+           "$domain" 2>/dev/null 1>/dev/null
+         echo "$($ds) sleep 3 secs"
+         sleep 3
+      fi
+      if [ "$2" = "$cname" ]; then echo;exit;fi;
+   fi
+
+   # remediate
+   if [ "$2" = "all" ] || [ "$2" = "remediate" ]; then
+      cname=remediate; docker ps | grep $cname 2>/dev/null 1>/dev/null
+      if [ $? -eq 0 ]; then echo "$($ds) (checked) '$cname'";else
+         echo "$($ds) starting $cname as $remediate"
+         docker run -d -P -h="$cname" --name $cname \
+           --link postgres:postgres --link wso2is:wso2is \
+           -p 9065:9999 -p 9066:9280 -p 9100:9100 -p 23:23 \
+           "$remediate" 2>/dev/null 1>/dev/null
+      fi
+      if [ "$2" = "$cname" ]; then echo;exit;fi;
+   fi
+
+   # workbench
+   if [ "$2" = "all" ] || [ "$2" = "workbench" ]; then
+      cname=workbench; docker ps | grep $cname 2>/dev/null 1>/dev/null
+      if [ $? -eq 0 ]; then echo "$($ds) (checked) '$cname'";else
+         echo "$($ds) starting $cname as $workbench"
+         docker run -d -P -h="$cname" --name $cname \
+           --dns=$hostip --env sentinel=$hostip \
+           --link postgres:postgres \
+           -p 9999:9999 -p 9000:9000 -p 9001:9001 -p 9022:22 \
+           -p 6199:6199 -p 9502:9502 -p 9504:9504 -p 9506:9506 \
+           -v $(pwd)/data/omni/prop/DIB.properties:/ibi/iway7/config/OmniPatient/resource/DIB.properties \
+           -v $(pwd)/data/omni:/omni \
+           "$workbench" 2>&1 >/dev/null
+         docker logs $cname
+      fi
+      if [ "$2" = "$cname" ]; then echo;exit;fi;
+   fi
+
+   # opmc
+   if [ "$2" = "all" ] || [ "$2" = "opmc" ]; then
+      cname=opmc; docker ps | grep $cname 2>/dev/null 1>/dev/null
+      if [ $? -eq 0 ]; then echo "$($ds) (checked) '$cname'";else
+         echo "$($ds) starting $cname as $opmc"
+         docker run -d -P -h="$cname" --name $cname \
+           --dns=$hostip --env sentinel=$hostip \
+           --link domain:domain --link wso2is:wso2is \
+           -p 8888:8080 \
+           -v $(pwd)/data/opmc/logs/tomcat7:/ibi/tomcat7/logs \
+           "$opmc" 2>&1 >/dev/null
+         docker logs $cname
+      fi
+      if [ "$2" = "$cname" ]; then echo;exit;fi;
+   fi
+      
    showstatus
    exit
 fi
 
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# down
+# down or stop
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-if [ "$1" = "down" ]; then
+if [ "$1" = "down" ] || [ "$1" = "stop" ]; then
+   signon
    if [ $# = 1 ]; then
-      echo
-      echo Usage : $0 down [all data postgres dba wso2is domain remediate workbench opmc] 
-      echo
-      exit
-   elif [ "$2" = "all" ]; then 
+      if [ "$1" = "down" ]; then
+         set -- "${@:1}" "all"
+      else 
+         echo Usage: $0 stop [all data postgres dba wso2is domain remediate workbench opmc]
+         echo
+         exit 0
+      fi
+   fi
+   
+   if [ "$2" = "all" ]; then 
       stopremoveall
-   else 
+   elif [ "$2" = "data" ] || [ "$2" = "postgres" ]; then
+      stopremove dba
+      stopremove domain
+      stopremove remediate
+      stopremove workbench
+      stopremove opmc
+      stopremove $2
+   elif [ "$2" = "wso2is" ]; then
+     stopremove remediate
+     stopremove opmc
+     stopremove $2
+   else
       stopremove $2
    fi
    showstatus
