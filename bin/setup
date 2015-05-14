@@ -44,9 +44,9 @@ elif [ "$OS" == "Darwin" ]; then
    if [ ! -e ~/Desktop ]; then
       echo "no desktop"
    else
-      ln -s $ODOCK/data ~/Desktop/Omni\ Integrators\ WorkBench
-      ln -s $ODOCK/index.html ~/Desktop/Omni\ Consoles.html
-      ln -s $ODOCK/bin/desk/omnidock ~/Desktop/Omni\ Shell
+      [ ! -e ~/Desktop/Omni\ Integrators\ WorkBench ] && ln -s $ODOCK/data ~/Desktop/Omni\ Integrators\ WorkBench
+      [ ! -e ~/Desktop/Omni\ Consoles.html ] &&  ln -s $ODOCK/index.html ~/Desktop/Omni\ Consoles.html
+      [ ! -e ~/Desktop/Omni\ Shell ] && ln -s $ODOCK/bin/desk/omnidock ~/Desktop/Omni\ Shell
    fi
    
 elif [ "$OS" == "Linux" ]; then
@@ -125,7 +125,7 @@ if [ "$?" == "0" ]; then
    #   eval $(boot2docker shellinit)
    #   export PS1="\\n\\h:\\W \\u> "
    #   clear
-   #   ./omni.sh
+   #   ./omni.sh 
    #   bash 
    #else 
       boot2docker ssh
