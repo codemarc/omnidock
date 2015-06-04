@@ -23,6 +23,9 @@ domain=$repo/cibi/omni:domain
 remediate=$repo/cibi/omni:remediate
 workbench=$repo/cibi/omni:workbench
 opmc=$repo/cibi/omni:opmc
+kibana=$repo/cibi/omni:kibana
+logstash=$repo/cibi/omni:logstash
+elasticsearch=$repo/cibi/omni:elasticsearch
 
 
 # get my host name and ip address
@@ -54,7 +57,7 @@ stopremove() {
 }
 
 stopremoveall() {
-   clist='opmc workbench remediate domain wso2is dba postgres data' 
+   clist='opmc workbench remediate domain wso2is dba postgres data logstash kibana elasticsearch' 
    for i in $clist
     do
        stopremove $i
@@ -242,6 +245,53 @@ if [ "$1" = "up" ] || [ "$1" = "start" ]; then
       if [ "$2" = "$cname" ]; then echo;exit;fi;
    fi
 
+   # elasticsearch
+   # docker run -d -h="elasticsearch" --name elasticsearch  -P -p 9200:9200 odin.ibi.com:5000/cibi/omni:elasticsearch
+   if [ "$2" = "all" ] || [ "$2" = "kibana" ]; then
+      cname=elasticsearch; docker ps | grep $cname 2>/dev/null 1>/dev/null
+      if [ $? -eq 0 ]; then echo "$($ds) (checked) '$cname'";else
+         echo "$($ds) starting $cname as $elasticsearch"
+         docker run -d -P -h="$cname" --name $cname \
+           --dns=$hostip --env sentinel=$hostip \
+           -p 9200:9200 \
+           "$elasticsearch" 2>&1 >/dev/null
+         docker logs $cname
+      fi
+      if [ "$2" = "$cname" ]; then echo;exit;fi;
+   fi
+
+   # logstash
+   # docker run -d -h="logstash" --name logstash --link elasticsearch:elasticsearch  -P -p 8500:8500 odin.ibi.com:5000/cibi/omni:logstash
+   if [ "$2" = "all" ] || [ "$2" = "kibana" ]; then
+      cname=logstash; docker ps | grep $cname 2>/dev/null 1>/dev/null
+      if [ $? -eq 0 ]; then echo "$($ds) (checked) '$cname'";else
+         echo "$($ds) starting $cname as $logstash"
+         docker run -d -P -h="$cname" --name $cname \
+           --dns=$hostip --env sentinel=$hostip \
+           --link elasticsearch:elasticsearch \
+           -p 8500:8500 \
+           "$logstash" 2>&1 >/dev/null
+         docker logs $cname
+      fi
+      if [ "$2" = "$cname" ]; then echo;exit;fi;
+   fi
+
+   # kibana
+   # docker run -d -h="kibana" --name kibana --link elasticsearch:elasticsearch  -P -p 5601:5601 odin.ibi.com:5000/cibi/omni:kibana
+   if [ "$2" = "all" ] || [ "$2" = "kibana" ]; then
+      cname=kibana; docker ps | grep $cname 2>/dev/null 1>/dev/null
+      if [ $? -eq 0 ]; then echo "$($ds) (checked) '$cname'";else
+         echo "$($ds) starting $cname as $kibana"
+         docker run -d -P -h="$cname" --name $cname \
+           --dns=$hostip --env sentinel=$hostip \
+           --link elasticsearch:elasticsearch \
+           -p 5601:5601 \
+           "$kibana" 2>&1 >/dev/null
+         docker logs $cname
+      fi
+      if [ "$2" = "$cname" ]; then echo;exit;fi;
+   fi
+
    # domain
    if [ "$2" = "all" ] || [ "$2" = "domain" ] || [ "$2" = "remediate" ]; then
       cname=domain; docker ps | grep $cname 2>/dev/null 1>/dev/null
@@ -303,6 +353,7 @@ if [ "$1" = "up" ] || [ "$1" = "start" ]; then
       fi
       if [ "$2" = "$cname" ]; then echo;exit;fi;
    fi
+
       
    showstatus
    exit
@@ -334,6 +385,12 @@ if [ "$1" = "down" ] || [ "$1" = "stop" ]; then
       stopremove opmc
       stopremove $2
    elif [ "$2" = "wso2is" ]; then
+     stopremove remediate
+     stopremove opmc
+     stopremove $2
+   elif [ "$2" = "elasticsearch" ]; then
+     stopremove logstash
+     stopremove kibana
      stopremove remediate
      stopremove opmc
      stopremove $2
