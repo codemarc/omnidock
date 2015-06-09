@@ -252,26 +252,26 @@ if [ "$1" = "up" ] || [ "$1" = "start" ]; then
       if [ $? -eq 0 ]; then echo "$($ds) (checked) '$cname'";else
          echo "$($ds) starting $cname as $elasticsearch"
          docker run -d -P -h="$cname" --name $cname \
-           --dns=$hostip --env sentinel=$hostip \
            -p 9200:9200 \
            "$elasticsearch" 2>&1 >/dev/null
-         docker logs $cname
+         sleep 3
+         echo "$($ds) sleep 3 secs"
       fi
       if [ "$2" = "$cname" ]; then echo;exit;fi;
    fi
 
    # logstash
-   # docker run -d -h="logstash" --name logstash --link elasticsearch:elasticsearch  -P -p 8500:8500 odin.ibi.com:5000/cibi/omni:logstash
+   # docker run -d -h="logstash" --name logstash --link elasticsearch:elasticsearch  -P -p 8500:8500 9292:9292 odin.ibi.com:5000/cibi/omni:logstash
    if [ "$2" = "all" ] || [ "$2" = "kibana" ]; then
       cname=logstash; docker ps | grep $cname 2>/dev/null 1>/dev/null
       if [ $? -eq 0 ]; then echo "$($ds) (checked) '$cname'";else
          echo "$($ds) starting $cname as $logstash"
          docker run -d -P -h="$cname" --name $cname \
-           --dns=$hostip --env sentinel=$hostip \
            --link elasticsearch:elasticsearch \
-           -p 8500:8500 \
+           -P -p 8500:8500 -p 9292:9292 \
            "$logstash" 2>&1 >/dev/null
-         docker logs $cname
+         sleep 3
+         echo "$($ds) sleep 3 secs"
       fi
       if [ "$2" = "$cname" ]; then echo;exit;fi;
    fi
@@ -283,11 +283,11 @@ if [ "$1" = "up" ] || [ "$1" = "start" ]; then
       if [ $? -eq 0 ]; then echo "$($ds) (checked) '$cname'";else
          echo "$($ds) starting $cname as $kibana"
          docker run -d -P -h="$cname" --name $cname \
-           --dns=$hostip --env sentinel=$hostip \
            --link elasticsearch:elasticsearch \
            -p 5601:5601 \
            "$kibana" 2>&1 >/dev/null
-         docker logs $cname
+         sleep 3
+         echo "$($ds) sleep 3 secs"
       fi
       if [ "$2" = "$cname" ]; then echo;exit;fi;
    fi
@@ -345,7 +345,7 @@ if [ "$1" = "up" ] || [ "$1" = "start" ]; then
          echo "$($ds) starting $cname as $opmc"
          docker run -d -P -h="$cname" --name $cname \
            --dns=$hostip --env sentinel=$hostip \
-           --link domain:domain --link wso2is:wso2is \
+           --link domain:domain --link wso2is:wso2is --link logstash:logstash \
            -p 8888:8080 \
            -v $(pwd)/data/opmc/logs/tomcat7:/ibi/tomcat7/logs \
            "$opmc" 2>&1 >/dev/null
