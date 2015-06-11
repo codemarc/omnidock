@@ -406,7 +406,7 @@ fi
 # update
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 if [ "$1" = "update" ]; then
-   clist='postgres dba wso2is domain remediate workbench opmc'
+   clist='postgres dba wso2is domain remediate workbench opmc kibana logstash elasticsearch'
    for cname in $clist
    do
       eval iname=\$$cname
