@@ -178,12 +178,13 @@ if [ "$1" = "up" ] || [ "$1" = "start" ]; then
       fi
    fi
    
-   # omniwb a.k.a server
+   # omniwb aka server
    if [ "$2" = "all" ] || [ "$2" = "omniwb" ] || [ "$2" = "server" ]; then
       docker ps | grep omniwb 2>/dev/null 1>/dev/null
       if [ $? -eq 0 ]; then echo "$($ds) (checked) omniwb";else
          echo "$($ds) starting omniwb as $wb"
          docker run -d -h="omniwb" --name omniwb --privileged \
+           -v /var/run/docker.sock:/var/run/docker.sock \
            -v $(pwd)/data/server:/ibi/omnidock/data/restx \
            -P -p 8086:8086 "$wb" 2>/dev/null 1>/dev/null
          echo "$($ds) sleep 3 secs"
@@ -192,6 +193,7 @@ if [ "$1" = "up" ] || [ "$1" = "start" ]; then
    	echo
    	exit
    fi 
+   
    
 
    # data
