@@ -123,6 +123,10 @@ if [ "$?" == "0" ]; then
       "$vbm" controlvm "boot2docker-vm" natpf1 "tcp-port8500,tcp,127.0.0.1,8500,,8500" 2>/dev/null
       "$vbm" controlvm "boot2docker-vm" natpf1 "tcp-port9292,tcp,127.0.0.1,9292,,9292" 2>/dev/null
       "$vbm" controlvm "boot2docker-vm" natpf1 "tcp-port9200,tcp,127.0.0.1,9200,,9200" 2>/dev/null
+      
+      #omniwb server
+      "$vbm" controlvm "boot2docker-vm" natpf1 "tcp-port8086,tcp,127.0.0.1,8086,,8086" 2>/dev/null
+      
    fi
 
    # save this for when we always have a standard docker client

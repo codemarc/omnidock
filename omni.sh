@@ -6,26 +6,24 @@
 ds="date +%Y-%m-%d:%H:%M:%S"
 
 # set my name and version
-vibi="OmniDock v0.9"
+vibi="OmniDock v0.99"
 cpy1="Copyright (c) 2015 Information Builders, Inc."
 cpy2="All Rights Reserved."
- 
-
-# private registry
-repo=odin.ibi.com:5000
 
 # hostname to image mappings
+
 data=postgres:9.4
 postgres=$data
-dba=$repo/cibi/omni:dba
-wso2is=$repo/cibi/omni:wso2is
-domain=$repo/cibi/omni:domain
-remediate=$repo/cibi/omni:remediate
-workbench=$repo/cibi/omni:workbench
-opmc=$repo/cibi/omni:opmc
-kibana=$repo/cibi/omni:kibana
-logstash=$repo/cibi/omni:logstash
-elasticsearch=$repo/cibi/omni:elasticsearch
+dba=cibi/omni:dba
+wso2is=cibi/omni:wso2is
+elasticsearch=cibi/omni:elasticsearch
+logstash=cibi/omni:logstash
+kibana=cibi/omni:kibana
+domain=cibi/omni:domain
+remediate=cibi/omni:remediate
+workbench=cibi/omni:workbench
+opmc=cibi/omni:opmc
+wb=cibi/omni:wb
 
 
 # get my host name and ip address
@@ -57,7 +55,7 @@ stopremove() {
 }
 
 stopremoveall() {
-   clist='opmc workbench remediate domain wso2is dba postgres data logstash kibana elasticsearch' 
+   clist='opmc workbench remediate domain kibana logstash elasticsearch wso2is dba postgres data wb'
    for i in $clist
     do
        stopremove $i
@@ -174,11 +172,27 @@ if [ "$1" = "up" ] || [ "$1" = "start" ]; then
       if [ "$1" = "up" ]; then
          set -- "${@:1}" "all"
       else 
-         echo Usage: $0 start [all data postgres dba wso2is domain remediate workbench opmc]
+         echo Usage: $0 start [all data postgres dba wso2is events domain remediate workbench opmc server]
          echo
          exit 0
       fi
    fi
+   
+   # omniwb a.k.a server
+   if [ "$2" = "all" ] || [ "$2" = "omniwb" ] || [ "$2" = "server" ]; then
+      docker ps | grep omniwb 2>/dev/null 1>/dev/null
+      if [ $? -eq 0 ]; then echo "$($ds) (checked) omniwb";else
+         echo "$($ds) starting omniwb as $wb"
+         docker run -d -h="omniwb" --name omniwb --privileged \
+           -v $(pwd)/data/server:/ibi/omnidock/data/restx \
+           -P -p 8086:8086 "$wb" 2>/dev/null 1>/dev/null
+         echo "$($ds) sleep 3 secs"
+         sleep 3
+      fi
+   	echo
+   	exit
+   fi 
+   
 
    # data
    if [ "$2" = "all" ] || [ "$2" = "data" ] || [ "$2" = "postgres" ] || \
@@ -369,7 +383,7 @@ if [ "$1" = "down" ] || [ "$1" = "stop" ]; then
       if [ "$1" = "down" ]; then
          set -- "${@:1}" "all"
       else 
-         echo Usage: $0 stop [all data postgres dba wso2is domain remediate workbench opmc]
+         echo Usage: $0 stop [all data postgres dba wso2is events domain remediate workbench opmc server]
          echo
          exit 0
       fi
@@ -388,14 +402,16 @@ if [ "$1" = "down" ] || [ "$1" = "stop" ]; then
      stopremove remediate
      stopremove opmc
      stopremove $2
-   elif [ "$2" = "elasticsearch" ]; then
+   elif [ "$2" = "events" ] ||[ "$2" = "elasticsearch" ]; then
      stopremove logstash
      stopremove kibana
      stopremove remediate
      stopremove opmc
      stopremove $2
+   elif [ "$2" = "server" ]; then
+	  stopremove omniwb
    else
-      stopremove $2
+     stopremove $2
    fi
    showstatus
    exit
@@ -406,7 +422,8 @@ fi
 # update
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 if [ "$1" = "update" ]; then
-   clist='postgres dba wso2is domain remediate workbench opmc kibana logstash elasticsearch'
+   clist='postgres dba wso2is elasticsearch logstash kibana domain remediate workbench opmc server'
+   
    for cname in $clist
    do
       eval iname=\$$cname
