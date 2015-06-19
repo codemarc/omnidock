@@ -1,6 +1,6 @@
 [Desktop Entry]
 Version=1.0
-Name=Omni Shell
+Name=Omni Integrators WorkbenchShell
 Comment=Start a terminal in the OmniDock location
 Exec=gnome-terminal -x /bin/bash -c "$HOME/omnidock/bin/desk/omnidock"
 Icon=utilities-terminal

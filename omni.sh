@@ -179,7 +179,6 @@ if [ "$1" = "up" ] || [ "$1" = "start" ]; then
    fi
    
    # omniwb aka server
-   
    if [ "$2" = "server" ]; then
    	echo "OmniWorkBench Server v0.1"
    	echo "$cpy1"
@@ -187,7 +186,7 @@ if [ "$1" = "up" ] || [ "$1" = "start" ]; then
 		echo
 		nohup java -jar bin/jetty-runner.jar --port 8086 bin/omniwb.war &
       exit 0
-	endif
+	fi
   
    
    if [ "$2" = "omniwb" ]; then

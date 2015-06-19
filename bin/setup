@@ -15,6 +15,8 @@ export ODOCK=$HOME/omnidock
 mkdir -p $ODOCK && cd $ODOCK
 
 
+
+
 #---------------------------------------------------------------------
 # Generate the update next upgrade script in the $ODOCK/bin directory
 #---------------------------------------------------------------------
@@ -35,9 +37,15 @@ chmod +x $ODOCK/bin/upgrade
 #---------------------------------------------------------------------
 if [ "$OS" == "Windows_NT" ]; then
       # remove old shell links
-	  [ -f "$HOME\Desktop\Omni Integrators WorkBench.lnk" ] && rm "$HOME\Desktop\Omni Integrators WorkBench.lnk"
-      [ -f "$HOME\Desktop\Omni Consoles.url" ] && rm "$HOME\Desktop\Omni Consoles.url"
+	   [ -f "$HOME\Desktop\Omni Integrators WorkBench.lnk" ] && rm "$HOME\Desktop\Omni Integrators WorkBench.lnk"
+	   [ -f "$HOME\Desktop\Omni Consoles.url" ] && rm "$HOME\Desktop\Omni Consoles.url"
       [ -f "$HOME\Desktop\Omni Shell.lnk" ] && rm "$HOME\Desktop\Omni Shell.lnk"
+      	   
+	   [ -f "$HOME\Desktop\Omni Integrators WorkBench Explorer.lnk" ] && rm "$HOME\Desktop\Omni Integrators WorkBench Explorer.lnk"
+	   [ -f "$HOME\Desktop\Omni Integrators Workbench Shell.lnk" ] && rm "$HOME\Desktop\Omni Integrators Workbench Shell.lnk"
+      [ -f "$HOME\Desktop\Omni Integrators Workbench Consoles.url" ] && rm "$HOME\Desktop\Omni Integrators Workbench Consoles.url"
+		[ -f "$HOME\Desktop\Omni Integrators WorkBench.url" ] && rm "$HOME\Desktop\Omni Integrators WorkBench.url"
+      
       cscript //nologo "$ODOCK/bin/desk/omnidock.vbs"
 
 elif [ "$OS" == "Darwin" ]; then
@@ -47,21 +55,31 @@ elif [ "$OS" == "Darwin" ]; then
       [ ! -e ~/Desktop/Omni\ Integrators\ WorkBench ] && ln -s $ODOCK/data ~/Desktop/Omni\ Integrators\ WorkBench
       [ ! -e ~/Desktop/Omni\ Consoles.html ] &&  ln -s $ODOCK/index.html ~/Desktop/Omni\ Consoles.html
       [ ! -e ~/Desktop/Omni\ Shell ] && ln -s $ODOCK/bin/desk/omnidock ~/Desktop/Omni\ Shell
+      [ ! -e ~/Desktop/Omni\ Integrators\ WorkBench\ Live ] && ln -s $ODOCK/data ~/Desktop/Omni\ Integrators\ WorkBench
    fi
    
 elif [ "$OS" == "Linux" ]; then
    if [ ! -e ~/Desktop ]; then
       echo "no desktop"
    else
-      ln -s $ODOCK/bin/desk/omniwb.desktop $HOME/Desktop/omniwb.desktop && chmod +x ~/Desktop/omniwb.desktop
-      ln -s $ODOCK/index.html ~/Desktop/Omni\ Consoles
-      ln -s $ODOCK/bin/desk/omnidock.desktop ~/Desktop/omnidock.desktop && chmod +x ~/Desktop/omnidock.desktop      
+      [ ! -e ~/Desktop/omniwb.desktop ] && (ln -s $ODOCK/bin/desk/omniwb.desktop ~/Desktop/omniwb.desktop && chmod +x ~/Desktop/omniwb.desktop)
+      [ ! -e ~/Desktop/omnidock.desktop ] && (ln -s $ODOCK/bin/desk/omnidock.desktop ~/Desktop/omnidock.desktop && chmod +x ~/Desktop/omnidock.desktop)
+      [ ! -e ~/Desktop/Omni\ Integrators\ Workbench\ Consoles ] && (ln -s $ODOCK/index.html ~/Desktop/Omni\ Integrators\ Workbench\ Consoles)
+      [ ! -e ~/Desktop/omniwbs.desktop ] && (ln -s $ODOCK/bin/desk/omniwbs.desktop ~/Desktop/omniwbs.desktop && chmod +x ~/Desktop/omniwbs.desktop)
    fi
    
 else
    echo $OS
 fi
 
+#---------------------------------------------------------------------
+# Add samples if missing 
+#---------------------------------------------------------------------
+mkdir -p $ODOCK/data/samples 
+cd $ODOCK/data/samples 
+unzip -u ../load/samples
+cd $ODOCK
+ 
 
 #---------------------------------------------------------------------
 # boot2docker 

@@ -1,7 +1,7 @@
 [Desktop Entry]
 Version=1.0
-Name=Omni Integrators WorkBench Explorer
-Exec=nautilus "omnidock/data"
+Name=Omni Integrators WorkBench
+Exec=sensible-browser http://localhost:8086
 Terminal=false
 Type=Application
 Categories=Application;
