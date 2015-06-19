@@ -179,7 +179,7 @@ if [ "$1" = "up" ] || [ "$1" = "start" ]; then
    fi
    
    # omniwb aka server
-   if [ "$2" = "all" ] || [ "$2" = "omniwb" ] || [ "$2" = "server" ]; then
+   if [ "$2" = "omniwb" ] || [ "$2" = "server" ]; then
       docker ps | grep omniwb 2>/dev/null 1>/dev/null
       if [ $? -eq 0 ]; then echo "$($ds) (checked) omniwb";else
          echo "$($ds) starting omniwb as $wb"
