@@ -52,10 +52,10 @@ elif [ "$OS" == "Darwin" ]; then
    if [ ! -e ~/Desktop ]; then
       echo "no desktop"
    else
-      [ ! -e ~/Desktop/Omni\ Integrators\ WorkBench ] && ln -s $ODOCK/data ~/Desktop/Omni\ Integrators\ WorkBench
-      [ ! -e ~/Desktop/Omni\ Consoles.html ] &&  ln -s $ODOCK/index.html ~/Desktop/Omni\ Consoles.html
-      [ ! -e ~/Desktop/Omni\ Shell ] && ln -s $ODOCK/bin/desk/omnidock ~/Desktop/Omni\ Shell
-      [ ! -e ~/Desktop/Omni\ Integrators\ WorkBench\ Live ] && ln -s $ODOCK/data ~/Desktop/Omni\ Integrators\ WorkBench
+      [ ! -e ~/Desktop/Omni\ Integrators\ WorkBench\ Explorer ] && ln -s $ODOCK/data ~/Desktop/Omni\ Integrators\ WorkBench
+      [ ! -e ~/Desktop/Omni\ Integrators\ WorkBench\ Shell ] && ln -s $ODOCK/bin/desk/omnidock ~/Desktop/Omni\ Integrators\ WorkBench\ Shell
+      [ ! -e ~/Desktop/Omni\ Integrators\ WorkBench\ Consoles.html ] &&  ln -s $ODOCK/index.html ~/Desktop/Omni\ Consoles.html
+      [ ! -e ~/Omni\ Integrators\ Workbench.webloc ] && ln -s $ODOCK/bin/desk/omnidock.webloc ~/Desktop/Omni\ Integrators\ WorkBench.webloc
    fi
    
 elif [ "$OS" == "Linux" ]; then
