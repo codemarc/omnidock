@@ -179,13 +179,24 @@ if [ "$1" = "up" ] || [ "$1" = "start" ]; then
    fi
    
    # omniwb aka server
-   if [ "$2" = "omniwb" ] || [ "$2" = "server" ]; then
+   
+   if [ "$2" = "server" ]; then
+   	echo "OmniWorkBench Server v0.1"
+   	echo "$cpy1"
+   	echo "$cpy2"
+		echo
+		nohup java -jar bin/jetty-runner.jar --port 8086 bin/omniwb.war &
+      exit 0
+	endif
+  
+   
+   if [ "$2" = "omniwb" ]; then
       docker ps | grep omniwb 2>/dev/null 1>/dev/null
       if [ $? -eq 0 ]; then echo "$($ds) (checked) omniwb";else
          echo "$($ds) starting omniwb as $wb"
          docker run -d -h="omniwb" --name omniwb --privileged \
            -v /var/run/docker.sock:/var/run/docker.sock \
-           -v $(pwd)/data/server:/ibi/omnidock/data/restx \
+           -v $(pwd)/data:/ibi/omnidock/data \
            -P -p 8086:8086 "$wb" 2>/dev/null 1>/dev/null
          echo "$($ds) sleep 3 secs"
          sleep 3
