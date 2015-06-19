@@ -184,7 +184,7 @@ if [ "$1" = "up" ] || [ "$1" = "start" ]; then
    	echo "$cpy1"
    	echo "$cpy2"
 		echo
-		nohup java -jar bin/jetty-runner.jar --port 8086 bin/omniwb.war &
+		java -jar bin/jetty-runner.jar --port 8086 bin/omniwb.war
       exit 0
 	fi
   
