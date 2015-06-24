@@ -119,6 +119,7 @@ if [ "$?" == "0" ]; then
       
    # virtual machine manage boot2docker ports
    if [ "$(boot2docker status)" == "running" ]; then
+      "$vbm" controlvm "boot2docker-vm" natpf1 "tcp-port2376,tcp,127.0.0.1,2376,,2376" 2>/dev/null
       "$vbm" controlvm "boot2docker-vm" natpf1 "tcp-port5432,tcp,127.0.0.1,5432,,5432" 2>/dev/null
       "$vbm" controlvm "boot2docker-vm" natpf1 "tcp-port5430,tcp,127.0.0.1,5430,,5430" 2>/dev/null
       "$vbm" controlvm "boot2docker-vm" natpf1 "tcp-port9999,tcp,127.0.0.1,9999,,9999" 2>/dev/null

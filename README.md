@@ -6,21 +6,22 @@ Information Builders, Omni Applications are domain specific master data applicat
 The Omni Integrators Workbench on Docker (omnidock) is a defined process that can be used to run standalone validation of an integrators work product. This document will help you get started.
 
 ### Boot2Docker
-Tuesday, 12th May 2015
+June, 24th May 2015
 
 At the moment, docker uses linux-specific kernel features, so to run it on non-linux systems ( windows, mac osx ) you **must** use a virtual machine.
 
 #### Setup
 
-* [Windows - boot2docker v1.6.0](https://github.com/boot2docker/windows-installer/releases/tag/v1.6.0)
-* [Mac OSX - boot2docker v1.6.0](https://github.com/boot2docker/osx-installer/releases/v1.6.0)
+* [Windows - boot2docker v1.7.0](https://github.com/boot2docker/windows-installer/releases/tag/v1.7.0)
+
+* [Mac OSX - boot2docker v1.7.0](https://github.com/boot2docker/osx-installer/releases/v1.7.0)
 
 The recommended way to use docker on windows and osx is to use the [boot2docker](http://boot2docker.io/). Detailed instructions for this are found in the [docker documentation site](https://docs.docker.com/installation/). The current installation of the package includes recent versions of
 
-* Boot2Docker 1.6.0 (Docker v1.6.0, Linux v3.18.11)
-* Boot2Docker Management Tool v1.6.0
-* VirtualBox v4.3.26-r98988
-* Docker Client v1.6.0 [osx]
+* Boot2Docker v1.7.0
+* Boot2Docker Management Tool v1.7.0
+* Docker Client v1.7.0
+* VirtualBox v4.3.28-r100309
 * msysGit v1.9.5-preview20150319 [windows]
 
 You use the Boot2Docker client to control the virtualized Docker Engine thru ssh. Using VirtualBox this way is the most common non-linux solution.
@@ -57,25 +58,26 @@ You use the Boot2Docker client to control the virtualized Docker Engine thru ssh
 		./omni.sh update 
 		./omni.sh up all
 
-	At this point you should have a docker machine (boot2docker ip is usually 192.168.59.103) available to your development environment, with the integrators tooling available. You should validate your connection with the database by using pgAdmin and connecting to the postgres instance at 192.168.59.103:5432. You should find the dqreo and patient databases already loaded with metadata.
-
-
-	$ ./omni.sh  
-	Running on omega (172.19.2.196)  
+	At this point you should have a docker machine (boot2docker ip is usually 192.168.59.103) available to your development environment, with the integrators tooling available.
 	
-	OmniDock v0.8 Usage: omni [command]  
+	$ ./omni.sh  
+	Running on boot2docker (10.0.2.15)  
+	
+	OmniDock v0.99 Usage: omni [command]  
 	A wrapper to start/stop/update the Omni Integrators Workbench  
 	  
-	Commands:  
-	ip		lists known ip addresses  
-	ssh		ssh to the named container  
-	logs		show the logs of the named container  
-	up		creates and starts test environment  
-	down		stops and removes test environment  
-	update		updates container images  
+	Commands:	
+	ip        lists known ip addresses	
+	ssh       ssh to the named container	
+	logs      show the logs of the named container	
+	start     creates and starts test environment container	
+	stop      stops and removes test environment container	
+	up        shortcut for start all	
+	down      shortcut for stop all	
+	update    updates container images
 
-
-
+You can run these scripts on your host machine by setting up the docker client in host enviroment.
+issue the  eval $(boot2docker shellinit) command and then type docker version. 
 
 ##### Done for now
 
@@ -83,7 +85,7 @@ So it all works and now its time to move on to something else. If you want to su
 
 	$ boot2docker suspend		To save the environment or you can type
 	$ boot2docker resume 		To bring it back
-	$ boot2docker ssh		To ssh into the running docker machine
+	$ boot2docker ssh			To ssh into the running docker machine
 	
 	and from there you can type 
 
