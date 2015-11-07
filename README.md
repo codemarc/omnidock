@@ -102,7 +102,7 @@ So it all works and now its time to move on to something else. If you want to su
 This process is currently under development, your mileage may vary.
 	
 ##### Contact Info
-If you have any questions or comments please feel free to reach out via email [greenie@codemarc.net](mailto:greenie@codemarc.net)
+If you have any questions or comments please feel free to reach out via email [marc@codemarc.net](mailto:marc@codemarc.net)
 
 
 
